@@ -1,0 +1,241 @@
+\section{Result}
+\label{sec:result}
+Once the mips processor had been extended with the pipeline, the system was first tested thoroughly using ModelSim. To simplify the testing process the assembler was used to generate VHDL test bench code from mips assembly code. After the system had been simulated and tested  it was exported and run on the FPGA development card.
+
+\subsection{Avoiding corrupt data as a result of hazards}
+\label{avoiding_corrupt_data}
+The implemented processor does not take any hazards (data, control, structural) into consideration, and so the programmer is left to deal with these issues. To avoid hazards the program must contain noop instructions where hazards can occur, to push dead code in between instructions. This is necessary in cases where instructions have dependencies and where a branch or a jump instruction occurs. To illustrate the propagation of signals in these cases, consider the examples below.
+\\
+
+\subsubsection{Register dependency} % (fold)
+\label{subsub:register_dependency}
+\begin{figure}[H]
+	\begin{subfigure}[b]{.5\linewidth}
+		\begin{lstlisting}[language={[mips]Assembler}]
+ldi $1 2
+ldi $2 3
+add $3 $1 $2
+		\end{lstlisting}
+		\caption{Code}
+		\label{code:add_without_noop}
+	\end{subfigure}
+	\begin{subfigure}[b]{.5\linewidth}
+		\centering
+		\includegraphics[scale=0.4]{./img/add_register_dependency_NO_NOOP}
+		\caption{Execution}
+		\label{img:add_without_noop}
+	\end{subfigure}
+	\caption{Add register denpendency without noop}
+	\label{add_without_noop}
+\end{figure}
+
+The code in Figure~\ref{code:add_without_noop} corresponds to the execution in Figure~\ref{img:add_without_noop}. It is the same for all examples in this subsection.\\
+\\
+The first couple instructions will push \emph{ldi} twice into the processor and \emph{add} in the third cycle. The desired operation is to perform addition on two numbers and then store the result in \$3. However, this is not the case, as Figure~\ref{img:add_without_noop} displays, because \$3 is never set. This  happens because the processor needs three cycles before the destination register can be loaded with the result of \emph{ldi}.
+\\
+\begin{figure}[H]
+	\begin{subfigure}[b]{.5\linewidth}
+		\begin{lstlisting}[language={[mips]Assembler}]
+ldi $1 2
+ldi $2 3
+noop
+noop
+noop
+add $3 $1 $2
+		\end{lstlisting}
+		\caption{Code}
+		\label{code:add_with_noop}
+	\end{subfigure}
+	\begin{subfigure}[b]{.5\linewidth}
+		\centering
+		\includegraphics[scale=0.4]{./img/add_register_dependency_WITH_3x_NOOP}
+		\caption{Execution}
+		\label{img:add_with_noop}
+	\end{subfigure}
+	\caption{Add register denpendency with noop}
+	\label{add_with_noop}
+\end{figure}
+
+In Figure~\ref{add_with_noop} the code has been slightly edited, adding three noop instructions between the last \emph{ldi} and \emph{add}. This stalls the execution of \emph{add} causing \$1 and \$2 to be loaded with the proper values before pushing the next instruction through the processor, the result of which is loading \$3 with the desired output, namely 2+3=5.
+\\
+
+\subsubsection{Branch instruction} % (fold)
+\label{subsub:branch_instruction}
+
+% subsection subsection_name (end)
+\begin{figure}[H]
+	\begin{subfigure}[b]{.5\linewidth}
+		\begin{lstlisting}[language={[mips]Assembler}]
+ldi $1 1
+ldi $2 1
+ldi $3 3
+beq $1 $2 6
+ldi $4 4
+ldi $5 5
+ldi $6 6
+ldi $7 7
+ldi $8 8
+ldi $9 9
+		\end{lstlisting}
+		\caption{Code}
+		\label{code:branch_without_noop}
+	\end{subfigure}
+	\begin{subfigure}[b]{.5\linewidth}
+		\centering
+		\includegraphics[scale=0.4]{./img/branch_WITHOUT_noop}
+		\caption{Execution}
+		\label{img:branch_without_noop}
+	\end{subfigure}
+	\caption{Branch without noop}
+	\label{branch_without_noop}
+\end{figure}
+
+In this branch example, the intention is to load the first three registers and then branch past the three next and continue loading registers seven, eight and nine. By looking at the execution however, it is clear that the branch has no effect, since all registers are loaded. This happens because it takes three clock cycles before the branch address is loaded to the \emph{PC} and by that time three new instructions has already been loaded and are in execution.
+\\
+\begin{figure}[H]
+	\begin{subfigure}[b]{.5\linewidth}
+		\begin{lstlisting}[language={[mips]Assembler}]
+ldi $1 1
+ldi $2 1
+ldi $3 3
+beq $1 $2 6
+noop
+noop
+noop
+ldi $4 4
+ldi $5 5
+ldi $6 6
+ldi $7 7
+ldi $8 8
+ldi $9 9
+		\end{lstlisting}
+		\caption{Code}
+		\label{code:branch_with_noop}
+	\end{subfigure}
+	\begin{subfigure}[b]{.5\linewidth}
+		\centering
+		\includegraphics[scale=0.4]{./img/branch_WITH_noop}
+		\caption{Execution}
+		\label{img:branch_with_noop}
+	\end{subfigure}
+	\caption{Branch with noop}
+	\label{branch_with_noop}
+\end{figure}
+
+Figure~\ref{code:branch_with_noop} and~\ref{img:branch_with_noop} displays the same code as before, only with \emph{noop} this time. The result is obvious, jumping past registers four, five and six.
+\\
+
+\subsubsection{Jump instruction} % (fold)
+\label{subsub:jump_instruction}
+
+% subsection subsection_name (end)
+\begin{figure}[H]
+	\begin{subfigure}[b]{.5\linewidth}
+		\begin{lstlisting}[language={[mips]Assembler}]
+ldi $1 1
+ldi $2 2
+ldi $3 3
+j 8
+ldi $4 4
+ldi $5 5
+ldi $6 6
+		\end{lstlisting}
+		\caption{Code}
+		\label{code:jump_without_noop}
+	\end{subfigure}
+	\begin{subfigure}[b]{.5\linewidth}
+		\centering
+		\includegraphics[scale=0.4]{./img/jump_without_noop}
+		\caption{Execution}
+		\label{img:jump_without_noop}
+	\end{subfigure}
+	\caption{Jump without noop}
+	\label{jump_without_noop}
+\end{figure}
+
+This example covers the jump instruction (\emph{j}), which is a little different than the rest. Whereas all of the above required three \emph{noop} instructions to successfully delay the executions,\emph{j} only needs one. This is due to the signal path for the jump instruction which is much shorter than the rest because the instruction is decoded in the \emph{control unit} and passed straight on to the \emph{PC}. By not having to travel through the ALU the jump is fast enough to make due with just one cycle delay.
+\\
+\begin{figure}[H]
+	\begin{subfigure}[b]{.5\linewidth}
+		\begin{lstlisting}[language={[mips]Assembler}]
+ldi $1 1
+ldi $2 2
+ldi $3 3
+j 8
+noop
+ldi $4 4
+ldi $5 5
+ldi $6 6
+		\end{lstlisting}
+		\caption{Code}
+		\label{code:jump_with_noop}
+	\end{subfigure}
+	\begin{subfigure}[b]{.5\linewidth}
+		\centering
+		\includegraphics[scale=0.4]{./img/jump_with_noop}
+		\caption{Execution}
+		\label{img:jump_with_noop}
+	\end{subfigure}
+	\caption{Jump with noop}
+	\label{jump_with_noop}
+\end{figure}
+
+Adding the one cycle delay makes the code perform as desired.
+
+\subsection{Simple test of the r-type instructions} % (fold)
+\label{sub:simple_test_of_the_r_type_instructions}
+\begin{figure}[H]
+	\begin{subfigure}[b]{.5\linewidth}
+		\begin{lstlisting}[language={[mips]Assembler}]
+ldi	$1 1
+ldi	$2 2
+ldi	$3 3
+ldi	$4 4
+noop
+noop
+add	$5 $1 $2
+sub	$5 $3 $2
+or	$5 $1 $2
+and	$5 $1 $3
+slt	$5 $4 $1
+		\end{lstlisting}
+		\caption{Code}
+		\label{code:jump_with_noop}
+	\end{subfigure}
+	\begin{subfigure}[b]{.5\linewidth}
+		\centering
+		\includegraphics[scale=0.4]{./img/r_type_instr}
+		\caption{Execution}
+		\label{img:jump_with_noop}
+	\end{subfigure}
+	\caption{Simple example of r-type instructions}
+	\label{jump_with_noop}
+\end{figure}
+In this example four values are stored in the registers 1 to 4, then a series of r-type instructions use these values to perform various operations, and save the value to register 5. There are no data dependencies after the load, and after the first result is calculated, the processor outputs a result each clock cycle.
+% subsection simple_test_of_the_r_type_instructions (end)
+
+\input{euler_test}
+
+% subsection euler_project_example (end)
+
+\subsection{Comparing the new and old processor}
+
+By changing the design from assignment one, the new processor features several performance advantages as well as some practical disadvantages. The pipeline makes it possible to utilize every element of the processor at the same time, and even though it can be hard to get a full pipeline going for any extended period of time due to branches and dependencies, the  general throughput of the pipeline should excel in comparison to the old one. While the old processor could output one response every 5T at most, the new design can, in theory, produce a result every 1T.\\
+
+The improved processor is not multi-cycle like the previous one, and because of this it does not take any states into consideration. This simplifies the implementation and results in a processor taking up less space.\\
+
+To evaluate the difference in speed at which the two designs operate, the Project Euler Problem of section~\ref{subsec:project_euler_problem_one} was run on both designs using ModelSim. The results can be viewed in Table~\ref{table:results}.
+\\
+\begin{table}[!htb]
+\centering
+\begin{tabular}{|l|l|l|} \hline
+\multicolumn{3}{|c|}{Results} \\ \hline
+\multirow{1}{*}{\bf Design:} & {\bf Clock period:} & {\bf Total execution time:} \\ \hline
+\multirow{1}{*}{MultiCycle} & 27ns & 267973ns \\ \hline
+\multirow{1}{*}{PipeLine} & 22ns & 218217ns \\ \hline
+\end{tabular}
+\caption{Results from running the Project Euler Problem on both designs.}
+\label{table:results}
+\end{table}
+
+Due to the different hazards explained in section~\ref{avoiding_corrupt_data}, almost half the assembly code consists of \emph{noop} instructions. But even with this drawback, it still runs faster than the old design.

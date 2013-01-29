@@ -1,0 +1,4 @@
+\section{Conclusion}
+In this assignment we successfully extended the MIPS processor from the previous assignment so that it utilizes a pipeline. By implementing a pipeline architecture the longest critical path through the processor has been reduced. This enables us to increase the clock rate from 25 MHz to 60 MHz, but some instructions might use as much as five cycles, compared to only three in the old design. This means that the total execution time is about the same, but by filling up the pipeline we're able to complete one instruction on every cycle, this increasing the throughput.\\
+
+Because hazard detection was not taken into consideration in this assignment, all programs executed must contain a relatively large amount of \emph{noop}'s to avoid erroneous results. This clearly decreases the efficiency of the processor, but even with this taken into consideration the total performance of the processor has increased with the implementation of the pipeline.\\
