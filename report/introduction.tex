@@ -1,12 +1,2 @@
 \section{Introduction}
 \label{introduction}
-The goal of this assignment was to improve the design and implementation of the processor created in the previous assignment by adding pipeline functionality. This was done by adding staging memories and using them to temporarily save values between the stages. The results of a given stage are stored in the corresponding staging memory so that the following stage can retrieve them at the beginning of the next clock cycle. By dividing the data path into smaller stages the longest path is vastly reduced, enabling the processor to run at a higher frequency. Also, because the various parts of the processor is divided between the different stages, the updated version of the processor can utilize its resources more efficiently by being able to use most of them at the same time.\\
-
-The implementation does not take into consideration the various types of hazards involved, and leaves it to the programmer to avoid faulty computations.\\
-
-Since this assignment focuses on extending an existing design, all the reusable code (connections to data and instruction memory, control unit implementation, sign extender, ALU controller) has been copied from the previous processor and added to the new one.\\
-
-The different staging memories were implemented as independent components, each containing one register per signal sent between the two stages using the memory.\\
-
-All code has been written in VHDL and compiled using ISE Project Navigator. ModelSIM was used to simulate the propagation of signals through the processor, and Xilinx Platform Studio was used to integrate the processor with the microblaze architecture.\\
-
