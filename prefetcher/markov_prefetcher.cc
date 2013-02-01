@@ -6,12 +6,12 @@
 
 #include "interface.hh"
 
-const unsigned int MISS_MEMORY = 50,
+const unsigned int MISS_MEMORY = 50;
 Addr miss_list[MISS_MEMORY];
 int last = 0;
 
 const unsigned int MAP_SIZE =16;
-intl missed_index[MAP_SIZE];
+unsigned int missed_index[MAP_SIZE];
 
 const unsigned int FETCH_COUNT = 3;
 
@@ -24,7 +24,7 @@ void insert(Addr miss_addr)
   }
 }
 
-void issue_prefetches(int miss_index)
+void issue_prefetches_from(int miss_index)
 {
   for (unsigned int i = miss_index;
        i < miss_index + FETCH_COUNT && i <= last; ++i)
@@ -63,7 +63,7 @@ void prefetch_access(AccessStat stat)
     int miss_index = in_miss_list(stat.mem_addr);
     if (miss_index != -1) 
     {
-      issue_prefetches(miss_index, FETCH_COUNT);
+      issue_prefetches_from(miss_index);
     }
     else
     {
