@@ -26,7 +26,7 @@ void insert(Addr miss_addr)
 
 void issue_prefetches_from(int miss_index)
 {
-  for (unsigned int i = miss_index;
+  for (unsigned int i = miss_index + 1;
        i < miss_index + FETCH_COUNT && i <= last; ++i)
   {
     if (!in_cache(miss_list[i]))
