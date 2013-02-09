@@ -23,7 +23,7 @@ class Prefetcher
   unsigned int prefetch_hits() const = 0;
   void increase_aggressiveness() = 0;
   void decrease_aggressiveness() = 0;
-  PrefetchDecision get_prefetch_address(AccessStat stat) = 0;
+  PrefetchDecision react_to_access(AccessStat stat) = 0;
 };
 
 #endif /* _PREFETCHER_H_ */
