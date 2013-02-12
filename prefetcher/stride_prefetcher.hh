@@ -10,4 +10,4 @@ class StridePrefetcher : public Pretcher
  public:
   void updateNumberOfStrides(int addr);
   PrefetchDecision getPrefetchedAddresses();
-}
+};
