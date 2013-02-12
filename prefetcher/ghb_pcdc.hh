@@ -7,6 +7,7 @@
 
 struct TableEntry
 {
+  explicit TableEntry() : address(0x0), previousMiss(0) { /* empty */ }
   explicit TableEntry(Addr addr, TableEntry *prevMiss)
       : address(addr), previousMiss(prevMiss) { /*empty */}
   const Addr address;
@@ -24,7 +25,7 @@ class GlobalHistoryBuffer
  public:
   explicit GlobalHistoryBuffer()
       : head_(0), evictingOldEntry_(false) { /*empty */}
-  void insert(const AccessStat &stat, const TableEntry *previousMiss);
+  const TableEntry* insert(const AccessStat &stat, const TableEntry *previousMiss);
  private:
   TableEntry* findFirstEntryReferencing(const TableEntry * const e) const;
   std::size_t head_;
@@ -55,9 +56,9 @@ TableEntry* GlobalHistoryBuffer<TableSize>::findFirstEntryReferencing(const Tabl
 
 
 template <unsigned int TableSize>
-void GlobalHistoryBuffer<TableSize>::insert(
+const TableEntry* GlobalHistoryBuffer<TableSize>::insert(
     const AccessStat &stat,
-    TableEntry *previousMiss)
+    const TableEntry *previousMiss)
 {
   if (evictingOldEntry_)
   {
@@ -72,12 +73,15 @@ void GlobalHistoryBuffer<TableSize>::insert(
       previousMiss = 0;
     }
   }
-  buffer_[head_++] = TableEntry(stat.addr, previousMiss);
+  buffer_[head_] = TableEntry(stat.addr, previousMiss);
+  TableEntry *newEntry = &buffer_[head_];
+  head_++;
   if (head_ >= TableSize)
   {
     head_ = 0;
     evictingOldEntry_ = true;
   }
+  return newEntry;
 }
 
 template <unsigned int TableSize>
@@ -92,14 +96,14 @@ class IndexTable
 
   //Overload [] instead? :x
   const TableEntry* previousAccessTo(Addr pc) const;
-  void setPreviousAccessTo(Addr pc, const TableEntry *e) const;
+  void setPreviousAccessTo(Addr pc, const TableEntry *e);
  private:
   TableEntry buffer_[TableSize];
   std::size_t head_;
 };
 
 template<unsigned int TableSize>
-TableEntry* IndexTable<TableSize>::previousAccessTo(Addr pc) const
+const TableEntry* IndexTable<TableSize>::previousAccessTo(Addr pc) const
 {
   std::size_t index = pc % TableSize;
   if (buffer_[index].address == pc)
@@ -206,22 +210,23 @@ PrefetchDecision GHB_PCDC<TableSize>::react_to_access(AccessStat stat)
     std::vector<Addr> addrs;
     for (int i = index; i < index + numBlocksToPrefetch_; ++i)
     {
-      addrs.push_back(stat.addr + deltas[i]);
+      addrs.push_back(stat.mem_addr + deltas[i]);
     }
     return PrefetchDecision(addrs);
   }
 }
 
-PrefetchDecision GHB_PCDC::react_to_access(AccessStat stat)
-{
-  insert(stat);
-  deltas = computeDeltaTable();
-  lastPair = getLastPair(deltas, stat);
-  index = searchForPreviousOccurrenceOf(lastPair);
-  return PrefetchDecision(
-      (for i <- 0 until numBlocksToPrefetch)
-      yield stat.addr + deltas[index + i];);
-}
+// template<unsigned int TableSize>
+// PrefetchDecision GHB_PCDC::react_to_access(AccessStat stat)
+// {
+//   insert(stat);
+//   deltas = computeDeltaTable();
+//   lastPair = getLastPair(deltas, stat);
+//   index = searchForPreviousOccurrenceOf(lastPair);
+//   return PrefetchDecision(
+//       (for i <- 0 until numBlocksToPrefetch)
+//       yield stat.addr + deltas[index + i];);
+// }
 
 #endif /* _GHB_PCDC_H_ */
 
