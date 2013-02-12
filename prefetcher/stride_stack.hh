@@ -5,11 +5,12 @@ class StrideStack
 {
  private:
   unsigned int currentSize, index;
-  unsigned int[5] stack;
+  unsigned int stack[5];
  public:
   void push(int value);
-  unsigned int pop();
+	void printStack();
   unsigned int getCurrentSize();
-}
+	unsigned int getItemAt(int index);
+};
 
 #endif
