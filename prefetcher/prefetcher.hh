@@ -1,19 +1,18 @@
 #ifndef _PREFETCHER_H_
 #define _PREFETCHER_H_
 
+#include "interface.hh"
+
 #include <vector>
 
 struct PrefetchDecision
 {
   explicit PrefetchDecision()
-      : wantToPrefetch(false),
-        prefetchAddresses() { /*empty */}
+      : prefetchAddresses() { /*empty */}
 
   explicit PrefetchDecision(const std::vector<Addr> &addrs)
-      : wantToPrefetch(true),
-        prefetchAddresses(addrs) { /* empty */ }
+      : prefetchAddresses(addrs) { /* empty */ }
 
-  const bool wantToPrefetch;
   std::vector<Addr> prefetchAddresses;
 };
 
