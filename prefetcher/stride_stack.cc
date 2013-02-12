@@ -1,22 +1,14 @@
 #include "stride_stack.hh"
+#include <iostream>
 
-StrideStack:: void push(int value)
+void StrideStack::push(int value)
 {
- int[5] tempStack;
- for(int i = 1; i > 5; ++i)
-  tempStack[i] = this->stack[i-1];
- ++currentSize;
-}
+ for(int i = 4; i > 0; --i)
+  this->stack[i] = this->stack[i-1];
+ 
+ if(currentSize < 5) currentSize++;
 
-unsigned int StrideStack::pop()
-{
- if(this->currentSize == 0)
-  return -1;
- unsigned int firstElement = this->stack[0];
- for(int i = 0; i < 3; ++i)
-  this->stack[i] = this->stack[i+1];
- --currentSize;
- return firstElement;
+ this->stack[0] = value;
 }
 
 unsigned int StrideStack::getCurrentSize() 
@@ -26,5 +18,15 @@ unsigned int StrideStack::getCurrentSize()
 
 unsigned int StrideStack::getItemAt(int index)
 {
- return this->stack[i];
+ return this->stack[index];
+}
+
+void StrideStack::printStack()
+{
+ std::cout << "Current stack: \n";
+ for(int i = 0; i < currentSize; ++i)
+ {
+ std::cout << i << ": " << stack[i] << "\n";
+ }
+	std::cout << "\n\n";
 }
