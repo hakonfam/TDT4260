@@ -11,21 +11,21 @@ struct PrefetchDecision
 
   explicit PrefetchDecision(const std::vector<Addr> &addrs)
       : wantToPrefetch(true),
-        prefetchAddresses(addr) { /* empty */ }
+        prefetchAddresses(addrs) { /* empty */ }
 
   const bool wantToPrefetch;
-  std::vector<Addr> prefetchAddresses_;
+  std::vector<Addr> prefetchAddresses;
 };
 
 class Prefetcher
 {
  public:
   virtual ~Prefetcher() {};
-  unsigned int prefetch_attempts() const = 0;
-  unsigned int prefetch_hits() const = 0;
-  void increase_aggressiveness() = 0;
-  void decrease_aggressiveness() = 0;
-  PrefetchDecision react_to_access(AccessStat stat) = 0;
+  virtual unsigned int prefetch_attempts() const = 0;
+  virtual unsigned int prefetch_hits() const = 0;
+  virtual void increase_aggressiveness() = 0;
+  virtual void decrease_aggressiveness() = 0;
+  virtual PrefetchDecision react_to_access(AccessStat stat) = 0;
 };
 
 #endif /* _PREFETCHER_H_ */
