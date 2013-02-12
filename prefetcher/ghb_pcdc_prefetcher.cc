@@ -14,7 +14,10 @@ void prefetch_access(AccessStat stat)
     for (It it = d.prefetchAddresses.begin(),
              e = d.prefetchAddresses.end(); it != e; ++it) 
     {
-        issue_prefetch(*it);
+        if (!in_cache(*it) && !in_mshr_queue(*it))
+        {
+            issue_prefetch(*it);
+        }
     }
 }
 
