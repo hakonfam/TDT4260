@@ -10,7 +10,8 @@ void prefetch_init()
 void prefetch_access(AccessStat stat)
 {
     PrefetchDecision d = prefetcher.react_to_access(stat);
-    DPRINTF(HWPrefetch, "Decided to prefetch %u addresses\n", d.size());
+    DPRINTF(HWPrefetch, "Decided to prefetch %u addresses\n", 
+            d.prefetchAddresses.size());
 
     typedef std::vector<Addr>::const_iterator It;
     for (It it = d.prefetchAddresses.begin(),
