@@ -8,10 +8,10 @@
 struct TableEntry
 {
   explicit TableEntry() : address(0x0), previousMiss(0) { /* empty */ }
-  explicit TableEntry(Addr addr, const TableEntry *prevMiss)
+  explicit TableEntry(Addr addr, TableEntry *prevMiss)
       : address(addr), previousMiss(prevMiss) { /*empty */}
   const Addr address;
-  const TableEntry *previousMiss;
+  TableEntry *previousMiss;
  private:
   //Disallow copying..?
   TableEntry& operator=(const TableEntry&);
@@ -25,9 +25,9 @@ class GlobalHistoryBuffer
  public:
   explicit GlobalHistoryBuffer()
       : head_(0), evictingOldEntry_(false) { /*empty */}
-  const TableEntry* insert(const AccessStat &stat, const TableEntry *previousMiss);
+  TableEntry* insert(const AccessStat &stat, TableEntry *previousMiss);
  private:
-  const TableEntry* findFirstEntryReferencing(const TableEntry * const e) const;
+  TableEntry* findFirstEntryReferencing(const TableEntry * const e) const;
   std::size_t head_;
   bool evictingOldEntry_;
   TableEntry buffer_[TableSize];
@@ -35,8 +35,7 @@ class GlobalHistoryBuffer
 };
 
 template<unsigned int TableSize>
-const TableEntry* GlobalHistoryBuffer<TableSize>::
-findFirstEntryReferencing(const TableEntry *const e) const
+TableEntry* GlobalHistoryBuffer<TableSize>::findFirstEntryReferencing(const TableEntry *const e) const
 {
   for (int i = head_; i >= 0; i--)
   {
@@ -57,9 +56,9 @@ findFirstEntryReferencing(const TableEntry *const e) const
 
 
 template <unsigned int TableSize>
-const TableEntry* GlobalHistoryBuffer<TableSize>::insert(
+TableEntry* GlobalHistoryBuffer<TableSize>::insert(
     const AccessStat &stat,
-    const TableEntry *previousMiss)
+    TableEntry *previousMiss)
 {
   if (evictingOldEntry_)
   {
@@ -96,15 +95,15 @@ class IndexTable
   }
 
   //Overload [] instead? :x
-  const TableEntry* previousAccessTo(Addr pc) const;
-  void setPreviousAccessTo(Addr pc, const TableEntry *e);
+  TableEntry* previousAccessTo(Addr pc) const;
+  void setPreviousAccessTo(Addr pc, TableEntry *e);
  private:
   TableEntry buffer_[TableSize];
   std::size_t head_;
 };
 
 template<unsigned int TableSize>
-const TableEntry* IndexTable<TableSize>::previousAccessTo(Addr pc) const
+TableEntry* IndexTable<TableSize>::previousAccessTo(Addr pc) const
 {
   std::size_t index = pc % TableSize;
   if (buffer_[index].address == pc)
@@ -115,7 +114,7 @@ const TableEntry* IndexTable<TableSize>::previousAccessTo(Addr pc) const
 }
 
 template<unsigned int TableSize>
-void IndexTable<TableSize>::setPreviousAccessTo(Addr pc, const TableEntry *e)
+void IndexTable<TableSize>::setPreviousAccessTo(Addr pc, TableEntry *e)
 {
   std::size_t index = pc % TableSize;
   buffer_[index] = TableEntry(pc, e);
@@ -161,8 +160,8 @@ class GHB_PCDC : public Prefetcher
 template<unsigned int TableSize>
 void GHB_PCDC<TableSize>::insert(const AccessStat &stat)
 {
-  const TableEntry *lastEntry = indexTable_.previousAccessTo(stat.pc);
-  const TableEntry *newEntry = historyBuffer_.insert(stat, lastEntry);
+  TableEntry *lastEntry = indexTable_.previousAccessTo(stat.pc);
+  TableEntry *newEntry = historyBuffer_.insert(stat, lastEntry);
   indexTable_.setPreviousAccessTo(stat.pc, newEntry);
 }
 
@@ -172,7 +171,7 @@ void GHB_PCDC<TableSize>::compute_delta_table(
     const AccessStat &stat,
     std::vector<int> &deltaTable) const
 {
-  for (const TableEntry *e = indexTable_.previousAccessTo(stat.pc);
+  for (TableEntry *e = indexTable_.previousAccessTo(stat.pc);
        e->previousMiss != 0; e = e->previousMiss)
   {
     deltaTable.push_back(e->address - e->previousMiss->address);
