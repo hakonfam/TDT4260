@@ -31,7 +31,9 @@ private:
     std::size_t head_;
     bool evictingOldEntry_;
     TableEntry buffer_[TableSize];
-  
+    //Disallow copying
+    GlobalHistoryBuffer& operator=(const GlobalHistoryBuffer&);
+    GlobalHistoryBuffer(const GlobalHistoryBuffer&);
 };
 
 template<unsigned int TableSize>
@@ -100,6 +102,9 @@ public:
 private:
     TableEntry buffer_[TableSize];
     std::size_t head_;
+    //Disallow copying
+    IndexTable& operator=(const IndexTable&);
+    IndexTable(const IndexTable&);
 };
 
 template<unsigned int TableSize>
@@ -200,6 +205,7 @@ PrefetchDecision GHB_PCDC<TableSize>::react_to_access(AccessStat stat)
     insert(stat);
     std::vector<int> deltas;
     compute_delta_table(stat, deltas);
+    DPRINTF(HWPrefetch, "Size of delta table: %u\n", deltas.size());
     int index = pastPreviousOccurrenceOfLastPair(deltas);
     if (index == -1)
     {
