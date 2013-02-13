@@ -8,7 +8,7 @@
 struct TableEntry
 {
   explicit TableEntry() : address(0x0), previousMiss(0) { /* empty */ }
-  explicit TableEntry(Addr addr, TableEntry *prevMiss)
+  explicit TableEntry(Addr addr, const TableEntry *prevMiss)
       : address(addr), previousMiss(prevMiss) { /*empty */}
   const Addr address;
   const TableEntry *previousMiss;
@@ -27,7 +27,7 @@ class GlobalHistoryBuffer
       : head_(0), evictingOldEntry_(false) { /*empty */}
   const TableEntry* insert(const AccessStat &stat, const TableEntry *previousMiss);
  private:
-  TableEntry* findFirstEntryReferencing(const TableEntry * const e) const;
+  const TableEntry* findFirstEntryReferencing(const TableEntry * const e) const;
   std::size_t head_;
   bool evictingOldEntry_;
   TableEntry buffer_[TableSize];
@@ -35,7 +35,8 @@ class GlobalHistoryBuffer
 };
 
 template<unsigned int TableSize>
-TableEntry* GlobalHistoryBuffer<TableSize>::findFirstEntryReferencing(const TableEntry *const e) const
+const TableEntry* GlobalHistoryBuffer<TableSize>::
+findFirstEntryReferencing(const TableEntry *const e) const
 {
   for (int i = head_; i >= 0; i--)
   {
@@ -73,7 +74,7 @@ const TableEntry* GlobalHistoryBuffer<TableSize>::insert(
       previousMiss = 0;
     }
   }
-  buffer_[head_] = TableEntry(stat.addr, previousMiss);
+  buffer_[head_] = TableEntry(stat.mem_addr, previousMiss);
   TableEntry *newEntry = &buffer_[head_];
   head_++;
   if (head_ >= TableSize)
