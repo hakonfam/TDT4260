@@ -10,7 +10,7 @@ struct TableEntry
     explicit TableEntry() : address(0x0), previousMiss(0) { /* empty */ }
     explicit TableEntry(Addr addr, TableEntry *prevMiss)
         : address(addr), previousMiss(prevMiss) { /*empty */}
-    const Addr address;
+    Addr address;
     TableEntry *previousMiss;
 // private:
 //     //Disallow copying..?
