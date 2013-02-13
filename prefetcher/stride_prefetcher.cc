@@ -21,7 +21,7 @@ PrefetchDecision StridePrefetcher::react_to_access(AccessStat stat)
 
 void StridePrefetcher::updateNumberOfStrides(int mem_addr)
 {
- if(stack->getCurrentSize < 2) return;
+ if(stack->getCurrentSize() < 2) return;
  int diff = stack->getValueAt(0) - stack->getValueAt(1);
 
  if(diff == currentDelta)
