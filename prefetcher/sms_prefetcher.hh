@@ -1,11 +1,21 @@
+#ifndef _SMS_PREFETCHER_HH_
+#define _SMS_PREFETCHER_HH_
 #include "prefetcher.hh"
-#include "interface.hh"
+#include <bitset>
+#include <vector>
+
+const int REGION_SIZE_LOG_2 = 11;
+const int REGION_SIZE = 1 << REGION_SIZE_LOG_2;
+const int N_BITS = REGION_SIZE / BLOCK_SIZE;
 
 struct GenerationEntry {
-  Addr pc;
-  uint64_t offset;
-  uint64_t tag;
-  std::bitset pattern
+    Addr pc;
+    uint64_t offset;
+    uint64_t tag;
+    std::bitset<N_BITS> pattern;
+
+    GenerationEntry(Addr pc = 0, uint64_t offset = 0, uint64_t tag = 0):
+	pc(pc), offset(offset), tag(tag) {}
 };
  
 struct HistoryEntry {
@@ -14,15 +24,16 @@ struct HistoryEntry {
   uint64_t offset;
   
   // the recorded pattern
-  std::bitset spatial_pattern;
+  std::bitset<N_BITS> spatial_pattern;
 };
 
-public class SMS_Prefetcher : public Prefetcher
+class SMS_Prefetcher : public Prefetcher
 {
 public:
-  virtual ~Prefetcher() {};
-  virtual unsigned int prefetch_attempts();
-  virtual unsigned int prefetch_hits();
+    explicit SMS_Prefetcher();
+  virtual ~SMS_Prefetcher() ;
+  virtual unsigned int prefetch_attempts() const;
+  virtual unsigned int prefetch_hits() const;
   virtual void increase_aggressiveness();
   virtual void decrease_aggressiveness();
   virtual PrefetchDecision react_to_access(AccessStat stat);
@@ -34,16 +45,21 @@ private:
   unsigned int filter_table_size;
   unsigned int accumulation_table_size;
 
-  vector<GenerationEntry> accumulation_table;
-  vector<GenerationEntry> filter_table;
+    unsigned int filter_table_index;
+    unsigned int accumulation_table_index;
 
-  vector<HistoryEntry> page_history_table;
+  /* together these tables make up the active generation table */
+    std::vector<GenerationEntry>  accumulation_table;
+    std::vector<GenerationEntry>  filter_table;
+
+    std::vector<HistoryEntry> page_history_table;
   
   bool hasEvictions (AccessStat stat);
-  bool hasRecordedPattern (Accessstat stat);
-  vector<Addr> getRecordedPattern(Accessstat stat);
+  bool hasRecordedPattern (AccessStat stat);
+    std::vector<Addr> getRecordedPattern(AccessStat stat);
   bool isTriggerAccess(AccessStat stat);
   void startRecording(AccessStat stat);
-  bool isRecordingRegion(AccessStat stat);
+  void stopRecording(AccessStat stat);
   void addToRecording(AccessStat stat);
-}
+};
+#endif
