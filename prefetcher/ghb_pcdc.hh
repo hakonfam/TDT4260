@@ -203,7 +203,6 @@ int GHB_PCDC<TableSize>::pastPreviousOccurrenceOfLastPair(
     return -1;
 }
 
-
 template<unsigned int TableSize>
 PrefetchDecision GHB_PCDC<TableSize>::react_to_access(AccessStat stat)
 {
@@ -219,9 +218,12 @@ PrefetchDecision GHB_PCDC<TableSize>::react_to_access(AccessStat stat)
     else
     {
         std::vector<Addr> addrs;
-        for (int i = index, 
-                 e = std::min(index + numBlocksToPrefetch_, 
-                              deltas.size()); i < e; ++i)
+        std::size_t endFetchIndex = 
+            std::static_cast<std::size_t>(
+                index + numBlocksToPrefetch_);
+        for (int i = index,
+                 e = std::min(endFetchIndex, deltas.size());
+             i < e; ++i)
         {
             addrs.push_back(stat.mem_addr + deltas.at(i));
         }
