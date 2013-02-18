@@ -3,6 +3,7 @@
 
 #include "prefetcher.hh"
 
+#include <algorithm>
 #include <vector>
 
 struct TableEntry
@@ -24,7 +25,10 @@ class GlobalHistoryBuffer
 {
 public:
     explicit GlobalHistoryBuffer()
-        : head_(0), evictingOldEntry_(false) { /*empty */}
+        : head_(0), evictingOldEntry_(false) 
+        { 
+            memset (buffer_, 0, sizeof(buffer_));
+        }
     TableEntry* insert(const AccessStat &stat, TableEntry *previousMiss);
 private:
     TableEntry* findFirstEntryReferencing(const TableEntry * const e);
@@ -187,7 +191,7 @@ template<unsigned int TableSize>
 int GHB_PCDC<TableSize>::pastPreviousOccurrenceOfLastPair(
     const std::vector<int> &deltas) const
 {
-    if (deltas.size() < 2) return -1;
+    if (deltas.size() < 4) return -1;
 
     int d1 = deltas[deltas.size() - 2], d2 = deltas[deltas.size() - 1];
     for (int i = deltas.size() - 4; i >= 0; i--)
@@ -214,7 +218,9 @@ PrefetchDecision GHB_PCDC<TableSize>::react_to_access(AccessStat stat)
     else
     {
         std::vector<Addr> addrs;
-        for (int i = index; i < index + numBlocksToPrefetch_; ++i)
+        for (int i = index, 
+                 e = std::min(index + numBlocksToPrefetch_, 
+                              deltas.size()); i < e; ++i)
         {
             addrs.push_back(stat.mem_addr + deltas[i]);
         }
