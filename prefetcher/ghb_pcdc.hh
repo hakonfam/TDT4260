@@ -193,10 +193,11 @@ int GHB_PCDC<TableSize>::pastPreviousOccurrenceOfLastPair(
 {
     if (deltas.size() < 4) return -1;
 
-    int d1 = deltas[deltas.size() - 2], d2 = deltas[deltas.size() - 1];
+    int d1 = deltas.at(deltas.size() - 2),
+        d2 = deltas.at(deltas.size() - 1);
     for (int i = deltas.size() - 4; i >= 0; i--)
     {
-        if (deltas[i] == d1 && deltas[i+1] == d2)
+        if (deltas.at(i) == d1 && deltas.at(i+1) == d2)
             return i + 2;
     }
     return -1;
@@ -222,7 +223,7 @@ PrefetchDecision GHB_PCDC<TableSize>::react_to_access(AccessStat stat)
                  e = std::min(index + numBlocksToPrefetch_, 
                               deltas.size()); i < e; ++i)
         {
-            addrs.push_back(stat.mem_addr + deltas[i]);
+            addrs.push_back(stat.mem_addr + deltas.at(i));
         }
         return PrefetchDecision(addrs);
     }
