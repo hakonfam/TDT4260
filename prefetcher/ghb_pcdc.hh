@@ -219,8 +219,7 @@ PrefetchDecision GHB_PCDC<TableSize>::react_to_access(AccessStat stat)
     {
         std::vector<Addr> addrs;
         std::size_t endFetchIndex = 
-            std::static_cast<std::size_t>(
-                index + numBlocksToPrefetch_);
+            static_cast<std::size_t>(index + numBlocksToPrefetch_);
         for (int i = index,
                  e = std::min(endFetchIndex, deltas.size());
              i < e; ++i)
