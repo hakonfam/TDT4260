@@ -4,7 +4,7 @@ GHB_PCDC<256> prefetcher;
 
 void prefetch_init()
 {
-  
+    DPRINTF(HWPrefetch, "Initializing ghb_pcdc_prefetcher.cc\n");
 }
 
 void prefetch_access(AccessStat stat)
@@ -19,7 +19,13 @@ void prefetch_access(AccessStat stat)
     {
         if (!in_cache(*it) && !in_mshr_queue(*it))
         {
-            issue_prefetch(*it);
+            //Should include check for *it <= MAX_PHYS_MEM_ADDR,
+            //but keeping it unchecked to get crashes if it happens.
+            //NOT
+            if (*it <= MAX_PHYS_MEM_ADDR)
+            {
+                issue_prefetch(*it);
+            }
         }
     }
 }

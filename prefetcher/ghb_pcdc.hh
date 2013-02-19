@@ -4,14 +4,33 @@
 #include "prefetcher.hh"
 
 #include <algorithm>
+#include <cassert>
+#include <cstdlib>
+#include <set>
 #include <vector>
 
 struct TableEntry
 {
-    explicit TableEntry() : address(0x0), previousMiss(0) { /* empty */ }
+    explicit TableEntry() : address(0x0), previousMiss(0) 
+        { 
+            DPRINTF(HWPrefetch, "Creating new TableEntry()\n");
+        }
     explicit TableEntry(Addr addr, TableEntry *prevMiss)
-        : address(addr), previousMiss(prevMiss) { /*empty */}
+        : address(addr), previousMiss(prevMiss) 
+        {
+            DPRINTF(HWPrefetch, 
+                    "Creating new TableEntry(addr, prev)\n");
+        }
+    ~TableEntry()
+        {
+            DPRINTF(HWPrefetch, "Destroyhing a TableEntry\n");            
+        }
     Addr address;
+    //Pointer member, does this mean we need copy ctor, assignment op
+    //and destructor? In this case, it's a pointer we do not own so
+    //we should not delete it when the TableEntry is deleted, and when
+    //copying a TableEntry it makes sense to copy the pointer instead 
+    //of its value - right..?
     TableEntry *previousMiss;
 // private:
 //     //Disallow copying..?
@@ -27,6 +46,7 @@ public:
     explicit GlobalHistoryBuffer()
         : head_(0), evictingOldEntry_(false) 
         { 
+            DPRINTF(HWPrefetch, "Creating new GHB\n");
             memset (buffer_, 0, sizeof(buffer_));
         }
     TableEntry* insert(const AccessStat &stat, TableEntry *previousMiss);
@@ -43,21 +63,33 @@ private:
 template<unsigned int TableSize>
 TableEntry* GlobalHistoryBuffer<TableSize>::findFirstEntryReferencing(const TableEntry *const e)
 {
+    TableEntry *first = 0;
+    unsigned int num = 0;
     for (int i = head_; i >= 0; i--)
     {
         if (buffer_[i].previousMiss == e)
         {
-            return &buffer_[i];
+            if (num == 0)
+            {
+                first = &buffer_[i];
+            }
+            num++;
         }
     }
     for (int i = TableSize - 1; i > head_; i--)
     {
         if (buffer_[i].previousMiss == e)
         {
-            return &buffer_[i];
+            if (num == 0)
+            {
+                first =  &buffer_[i];
+            }
+            num++;
         }
     }
-    return 0;
+    assert(num <= 1 && 
+           "Should not have more access to same previous miss.");
+    return first;
 }
 
 
@@ -68,10 +100,19 @@ TableEntry* GlobalHistoryBuffer<TableSize>::insert(
 {
     if (evictingOldEntry_)
     {
+        assert(buffer_[head_].previousMiss == 0 &&
+               "Evicted entry is first in the queue, and "
+               "should not point to any elements in front");
         TableEntry *e = findFirstEntryReferencing(&buffer_[head_]);
         if (e != 0)
         {
+            DPRINTF(HWPrefetch,
+                    "Kicking out referenced element, unlinking it\n");
             e->previousMiss = 0;
+        }
+        else
+        {
+            DPRINTF(HWPrefetch, "Element was not referenced\n");
         }
         //If we are kicking out the previous miss, do not link to it...
         if (&buffer_[head_] == previousMiss)
@@ -79,8 +120,10 @@ TableEntry* GlobalHistoryBuffer<TableSize>::insert(
             previousMiss = 0;
         }
     }
-    buffer_[head_] = TableEntry(stat.mem_addr, previousMiss);
-    TableEntry *newEntry = &buffer_[head_];
+//    buffer_[head_] = TableEntry(stat.mem_addr, previousMiss);
+//    TableEntry *newEntry = &buffer_[head_];
+    TableEntry *newEntry =
+        new (&buffer_[head_]) TableEntry(stat.mem_addr, previousMiss);
     head_++;
     if (head_ >= TableSize)
     {
@@ -97,6 +140,7 @@ public:
     explicit IndexTable()
         : head_(0)
         {
+            DPRINTF(HWPrefetch, "Creating new Index Table\n");
             memset(buffer_, 0, sizeof(buffer_));
         }
 
@@ -125,8 +169,20 @@ TableEntry* IndexTable<TableSize>::previousAccessTo(Addr pc) const
 template<unsigned int TableSize>
 void IndexTable<TableSize>::setPreviousAccessTo(Addr pc, TableEntry *e)
 {
+    //Is this correct..?
+    //Idea: If e is the address of a miss which an index table entry
+    //has recorded as the address of its previous miss, then that miss
+    //must have been overwritten. Thus, it should be cleared.
+    for (int i = 0; i < TableSize; ++i)
+    {
+        if (buffer_[i].previousMiss == e)
+        {
+            buffer_[i].previousMiss = 0;
+        }
+    }
     std::size_t index = pc % TableSize;
-    buffer_[index] = TableEntry(pc, e);
+    new (&buffer_[index]) TableEntry(pc, e);
+//    buffer_[index] = TableEntry(pc, e);
 }
 
 
@@ -139,7 +195,10 @@ public:
           hits_(0),
           numBlocksToPrefetch_(2),
           historyBuffer_(),
-          indexTable_() { /*empty */}
+          indexTable_() 
+        { 
+            DPRINTF(HWPrefetch, "Creating GHB_PCDC\n");
+        }
     unsigned int prefetch_attempts() const { return attempts_; }
     unsigned int prefetch_hits() const { return hits_; }
     void increase_aggressiveness() {
@@ -153,9 +212,8 @@ public:
 private:
     void insert(const AccessStat &stat);
   
-    void compute_delta_table(
-        const AccessStat &stat,
-        std::vector<int> &deltaTable) const;
+    std::vector<int> compute_delta_table(
+        const AccessStat &stat) const;
 
     int pastPreviousOccurrenceOfLastPair(const std::vector<int> &deltas) const;
 
@@ -176,15 +234,33 @@ void GHB_PCDC<TableSize>::insert(const AccessStat &stat)
 
 
 template<unsigned int TableSize>
-void GHB_PCDC<TableSize>::compute_delta_table(
-    const AccessStat &stat,
-    std::vector<int> &deltaTable) const
+std::vector<int> GHB_PCDC<TableSize>::compute_delta_table(
+    const AccessStat &stat) const
 {
+    std::vector<int> deltaTable(0);
+    std::vector<TableEntry*> seen;
     for (TableEntry *e = indexTable_.previousAccessTo(stat.pc);
-         e->previousMiss != 0; e = e->previousMiss)
+         e != 0 && e->previousMiss != 0; e = e->previousMiss)
     {
+        typedef std::vector<TableEntry*>::const_iterator It;
+        It prevOccurrence = find(seen.begin(), seen.end(), e);
+        if (prevOccurrence != seen.end())
+        {
+            DPRINTF(HWPrefetch, "Error, detected cycle in GHB\n");
+            DPRINTF(HWPrefetch, "Cycle: %#x", *prevOccurrence);
+            ++prevOccurrence;
+            for (; prevOccurrence != seen.end(); ++prevOccurrence)
+            {
+                DPRINTF(HWPrefetch, ", %#x", *prevOccurrence);
+            }
+            DPRINTF(HWPrefetch, ", %#x", e);
+            abort();
+        }
+        seen.push_back(e);
         deltaTable.push_back(e->address - e->previousMiss->address);
+        DPRINTF(HWPrefetch, "Added another delta\n");
     }
+    return deltaTable;
 }
 
 template<unsigned int TableSize>
@@ -206,9 +282,13 @@ int GHB_PCDC<TableSize>::pastPreviousOccurrenceOfLastPair(
 template<unsigned int TableSize>
 PrefetchDecision GHB_PCDC<TableSize>::react_to_access(AccessStat stat)
 {
+    //ONLY DO THIS ON A MISS! But debug cycle first...
+    if (!stat.miss) 
+    {
+        return PrefetchDecision();
+    }
     insert(stat);
-    std::vector<int> deltas;
-    compute_delta_table(stat, deltas);
+    std::vector<int> deltas = compute_delta_table(stat);
     DPRINTF(HWPrefetch, "Size of delta table: %u\n", deltas.size());
     int index = pastPreviousOccurrenceOfLastPair(deltas);
     if (index == -1)
