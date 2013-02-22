@@ -25,7 +25,7 @@ static void insertGeneration(GenerationEntry entry, vector<GenerationEntry> &tab
     table.at(index) = entry;
 } 
 
-static int findGeneration(AccessStat stat, vector<GenerationEntry> &table, int table_size){
+static int findGeneration(AccessStat stat, vector<GenerationEntry> &table){
     int index = 0;
     for(vector<GenerationEntry>::const_iterator it = table.begin(); it != table.end(); it++, index++){
 	if(it->pc == stat.pc && it->offset == getOffset(stat.mem_addr)){
@@ -35,11 +35,16 @@ static int findGeneration(AccessStat stat, vector<GenerationEntry> &table, int t
     return -1;
 }
 
+#error Det er noe feil her!
+
 SMS_Prefetcher::SMS_Prefetcher() :
   attempts(0), hits(0), 
   history_table_size(64), 
   filter_table_size(32), accumulation_table_size(32),
-  filter_table_index(0), accumulation_table_index(0)
+  filter_table_index(0), accumulation_table_index(0),
+  accumulation_table(),
+  filter_table(),
+  page_history_table()
 {
     accumulation_table = vector<GenerationEntry>(accumulation_table_size);
     accumulation_table.reserve(accumulation_table_size);
@@ -87,14 +92,27 @@ PrefetchDecision SMS_Prefetcher:: react_to_access(AccessStat stat){
     return PrefetchDecision(addr);
 }
 
-bool SMS_Prefetcher::hasEvictions (AccessStat stat) { /* empty */ }
-bool SMS_Prefetcher::hasRecordedPattern (AccessStat stat) { /* empty */ }
-vector<Addr> SMS_Prefetcher::getRecordedPattern(AccessStat stat) { /* empty */ }
+bool SMS_Prefetcher::hasEvictions (AccessStat stat) { 
+    int index = findGeneration(stat, filter_table);
+    if ( index != -1){
+	
+    }
+
+  return false;
+}
+
+bool SMS_Prefetcher::hasRecordedPattern (AccessStat stat) { 
+  return false; 
+}
+
+vector<Addr> SMS_Prefetcher::getRecordedPattern(AccessStat stat) { 
+  return vector<Addr>(); 
+}
 
 bool SMS_Prefetcher::isTriggerAccess(AccessStat stat){ 
-    int index = findGeneration(stat, filter_table, filter_table_size);
+    int index = findGeneration(stat, filter_table);
     if (index != -1) return false;
-    index = findGeneration(stat, accumulation_table, accumulation_table_size);
+    index = findGeneration(stat, accumulation_table);
     if( index != -1) return false;
     return true;
 }
@@ -106,16 +124,16 @@ void SMS_Prefetcher::startRecording(AccessStat stat) {
 }
 
 void SMS_Prefetcher::stopRecording(AccessStat stat) {
-    int index = findGeneration(stat, filter_table, filter_table_size);
+    int index = findGeneration(stat, filter_table );
     if (index != -1){
 	GenerationEntry emptyEntry;
 	filter_table.at(index) = emptyEntry;
 	return;
     }
-    index = findGeneration(stat, accumulation_table, accumulation_table_size);
+    index = findGeneration(stat, accumulation_table);
     if ( index != -1){
 	
-// move to history table
+//TODO: move to history table
 	return;
     }
     
@@ -123,20 +141,23 @@ void SMS_Prefetcher::stopRecording(AccessStat stat) {
 }
 
 void SMS_Prefetcher::addToRecording(AccessStat stat) { 
-    int index = findGeneration(stat, filter_table, filter_table_size);
+    int index = findGeneration(stat, filter_table);
     if (index != 0){
-    }
-    index = findGeneration( stat, accumulation_table, accumulation_table_size);
-    if(index != 0){
-    }
-    
-    for(vector<GenerationEntry>::const_interator it = accumulation_table.begin(); it != accumulation_table.end(); it++){
-	if(it->pc == stat.pc && it->offset == getOffset(stat.mem_addr)){
-	    // update bit pattern
+	
+	// move from filter table to acc table
+	GenerationEntry entry = filter_table.at(index);
+	filter_table.at(index) = GenerationEntry();
+	entry.pattern |= (1 << entry.offset);
+	entry.pattern |= (1 << getOffset(stat.mem_addr));
+	insertGeneration(entry, accumulation_table, accumulation_table_index, accumulation_table_size);
+	return;
 
-	    return;
-	    
-	}
+    }
+    index = findGeneration( stat, accumulation_table);
+    if(index != 0){
+	// update bit pattern
+	accumulation_table.at(index).pattern |= (1 << getOffset(stat.mem_addr)); 
+
     }
     
 }
@@ -161,19 +182,7 @@ extern "C" void prefetch_init(void){ /* empty */ }
  */
 extern "C" void prefetch_access(AccessStat stat){ 
 
-
-  /* if is trigger action
-     else recording
-   */
-  // check if recorded pattern exists,
-  // if pattern exists fetch all addresses in region
-
-  // find region of access
-  // if page in region has been evicted stop recording and add to history table
   
-  // if trigger access start recording in region
-  
-  // if access to a recording region, add to recording
 
   
 }
