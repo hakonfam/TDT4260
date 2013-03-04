@@ -4,12 +4,12 @@
 class StrideStack
 {
  private:
-  unsigned int currentSize, index;
-  unsigned int stack[5];
+  	unsigned int currentSize, index;
+  	unsigned int stack[5];
  public:
-  void push(Addr value);
+  	void push(Addr value);
 	void printStack();
-  unsigned int getCurrentSize();
+	unsigned int getCurrentSize();
 	unsigned int getItemAt(int index);
 };
 
