@@ -1,7 +1,8 @@
 #include "stride_stack.hh"
+#include "interface.hh"
 #include <iostream>
 
-void StrideStack::push(int value)
+void StrideStack::push(Addr value)
 {
  for(int i = 4; i > 0; --i)
   this->stack[i] = this->stack[i-1];
