@@ -15,7 +15,8 @@ struct GenerationEntry {
     std::bitset<N_BITS> pattern;
 
     GenerationEntry(Addr pc = 0, uint64_t offset = 0, uint64_t tag = 0):
-	pc(pc), offset(offset), tag(tag) {}
+      pc(pc), offset(offset), tag(tag), pattern()
+  { /* empty */ }
 };
  
 struct HistoryEntry {
@@ -25,12 +26,17 @@ struct HistoryEntry {
   
   // the recorded pattern
   std::bitset<N_BITS> spatial_pattern;
+
+  HistoryEntry(Addr pc = 0, uint64_t offset = 0 ):
+    pc(pc), offset(offset),
+    spatial_pattern()
+    { /* empty */ }
 };
 
 class SMS_Prefetcher : public Prefetcher
 {
 public:
-    explicit SMS_Prefetcher();
+  SMS_Prefetcher();
   virtual ~SMS_Prefetcher() ;
   virtual unsigned int prefetch_attempts() const;
   virtual unsigned int prefetch_hits() const;
