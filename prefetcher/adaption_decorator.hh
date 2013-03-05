@@ -17,13 +17,13 @@ public:
         return hits_; 
     }
     virtual void increase_aggressiveness() {
-        p->increase_aggressiveness();
+        p_->increase_aggressiveness();
     }
     virtual void decrease_aggressiveness() {
-        p->decrease_aggressiveness();
+        p_->decrease_aggressiveness();
     }
     virtual PrefetchDecision react_to_access(AccessStat stat);
-    virtual void prefetch_complete(Add addr);
+    virtual void prefetch_complete(Addr addr);
 private:
     bool too_aggressive() const;
     bool too_defensive() const;
@@ -36,7 +36,7 @@ PrefetchDecision AdaptionDecorator::react_to_access(AccessStat stat)
 {
     if (stat.miss) 
     {
-        accesses_++;
+        misses_++;
     }
     if (get_prefetch_bit(stat.mem_addr))
     {
@@ -48,27 +48,27 @@ PrefetchDecision AdaptionDecorator::react_to_access(AccessStat stat)
     return d;
 }
 
-void PrefetchDecision::prefetch_complete(Addr addr) const
+void AdaptionDecorator::prefetch_complete(Addr addr) const
 {
     set_prefetch_bit(addr);
 }
 
-bool PrefetchDecision::too_aggressive() const
+bool AdaptionDecorator::too_aggressive() const
 {
     //TODO: Find a heuristic for determining whether 
     //aggressiveness should be decreased
     //Maybe low accuracy? ?_?
     double accuracy = static_cast<double>(hits_) / (attempts + hits + 1);
-    double attemptRate = static_cast<double>(attempts) / (accesses_ + 1);
+    double attemptRate = static_cast<double>(attempts) / (misses_ + 1);
     return accuracy < 0.25 && attemptRate > 0.75;
 }
 
-bool PrefetchDecision::too_defensive() const
+bool AdaptionDecorator::too_defensive() const
 {
     //TODO: Find a heuristic for determining whether 
     //aggressiveness should be increased
     double accuracy = static_cast<double>(hits_) / (attempts + hits + 1);
-    double attemptRate = static_cast<double>(attempts) / (accesses_ + 1);
+    double attemptRate = static_cast<double>(attempts) / (misses_ + 1);
     return accuracy > 0.75;
 }
 
