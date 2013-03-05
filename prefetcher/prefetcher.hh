@@ -25,7 +25,7 @@ public:
     virtual void increase_aggressiveness() = 0;
     virtual void decrease_aggressiveness() = 0;
     virtual PrefetchDecision react_to_access(AccessStat stat) = 0;
-    virtual void prefetch_complete(Add addr) {};
+    virtual void prefetch_complete(Addr addr) {};
 };
 
 #endif /* _PREFETCHER_H_ */
