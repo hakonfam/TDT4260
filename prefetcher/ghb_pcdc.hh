@@ -204,9 +204,14 @@ public:
     void increase_aggressiveness() {
         if (numBlocksToPrefetch_ > 1)
             numBlocksToPrefetch_--;
+        
+        DPRINTF(HWPrefetch, "Decreased aggressiveness to %u", 
+                numBlocksToPrefetch_);
     }
     void decrease_aggressiveness() {
         numBlocksToPrefetch_++;
+        DPRINTF(HWPrefetch, "Increased aggressiveness to %u", 
+                numBlocksToPrefetch_)
     }
     PrefetchDecision react_to_access(AccessStat stat);
 private:
