@@ -14,7 +14,11 @@ Grannas' paper (reference needed).
 
 \subsection{Sequential Prefetcher}
 \label{sec:sequentialPrefetcher}
-The sequential prefetcher ... 
+The sequential prefetcher is based on the fact that memory accesses often follow a sequential pattern. When accessing the members of an array, or iterating through a loop, most of the memory accesses will follow a stride-n pattern (where n is the number of addresses between the accessed addressess). 
+
+The sequential prefetcher keeps track of the last \emph{n} values, and also keeps track of for how long the current stride has been ongoing. The prefetchers agressiveness can be configured by configuring the amount of strides that needs to be discovered before the prefetcher will react on a memory access. 
+
+For each memory access, the memory address is compared to the last memory address. If the current stride value corresponds to the difference, the number of current strides is updated. If the number of current strides is greater than or equal to the required/configured amunt of strides, a prefetched address is returned.
 {\bf (references, citations)}
 
 \subsection{Global History Buffer Prefetcher}
@@ -26,10 +30,10 @@ History Buffer, Program Counter based with Delta Correlation).
 
 \subsection{Markov Prefetcher}
 \label{sec:markovPrefetcher}
-The Markov prefetcher...
+The Markov prefetcher is an address based prefetcher,...
 {\bf (references, citations)}
 
 \subsection{Spatial Memory Streaming Prefetcher}
 \label{sec:smsPrefetcher}
-The Spatial Memory Streaming (SMS) Prefetcher...
-{\bf (references, citations)}
+The Spatial Memory Streaming (SMS) Prefetcher is a spatial locality
+prefetcher...  {\bf (references, citations)}
