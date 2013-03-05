@@ -69,7 +69,7 @@ bool AdaptionDecorator::too_aggressive() const
     //aggressiveness should be decreased
     //Maybe low accuracy? ?_?
     double accuracy = static_cast<double>(hits_) / (attempts_ + hits_ + 1);
-    double attemptRate = static_cast<double>(attempts) / (misses_ + 1);
+    double attemptRate = static_cast<double>(attempts_) / (misses_ + 1);
     return accuracy < 0.25 && attemptRate > 0.75;
 }
 
@@ -78,7 +78,7 @@ bool AdaptionDecorator::too_defensive() const
     //TODO: Find a heuristic for determining whether 
     //aggressiveness should be increased
     double accuracy = static_cast<double>(hits_) / (attempts_ + hits_ + 1);
-    double attemptRate = static_cast<double>(attempts) / (misses_ + 1);
+    double attemptRate = static_cast<double>(attempts_) / (misses_ + 1);
     return accuracy > 0.75 || (accuracy > 0.50 && attemptRate < 0.05);
 }
 

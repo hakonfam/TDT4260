@@ -34,5 +34,5 @@ void prefetch_access(AccessStat stat)
 
 void prefetch_complete(Addr addr)
 {
-  
+    prefetcher.prefetch_complete(addr);
 }
