@@ -8,17 +8,20 @@
 \section{Methodology}
 \label{sec:methodology}
 
-
-
 To discover what the effect of using different prefetching strategies
 for different applications are, we used the M5 simulator. This
-simulator is a software implementation of the AlphaXXX processor
-(reference)(should M5 description be in introduction?). By
-implementing the different prefetching strategies we were considering
-and building them into the simulator, we could run programs with this
-simulator and get running time statistics for each of the
-programs. Doing this for all the strategies gave us numbers for each
-of them. Results could then be obtained by comparing these with the
-running times of the applications when using no prefetcher. (Should we
-say that they tests were run on a cluster?)
+simulator is a software implementation loosely based on the Alpha
+21264 processor \cite{TDT4260 Staff} (should M5 description be in
+introduction?). In order to test our prefetcher implementations, each
+of them were implemented as a submodule of M5, and built into the
+final simulator binary. For each of the simulators built this way, we
+executed a suite of programs from the SPEC CPU2000 benchmark. The
+simulator software automatically tracked key statistics during the
+program execution, such as cache misses, prefetches issued, and clock
+cycles used for running the program. By comparing the number of cycles
+used when executing the program with our prefetchers included in the
+simulator to the number of cycles used without a prefetcher, we could
+calculate the speedup gains due to the prefetcher for the different
+programs. (Should we say that they tests were run on a cluster?)
 {\bf (references, citations)}
+

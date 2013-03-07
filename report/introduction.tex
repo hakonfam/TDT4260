@@ -8,11 +8,16 @@
 \section{Introduction}
 \label{sec:introduction}
 Processor performance has increased more than memory performance,
-which has led to what is commonly known as the Memory Gap (see some
-figure, with a reference to it). In order to remedy this, a memory
+which has led to what is commonly known as the Memory Gap (see figure~\ref{img:mem_gap}). In order to remedy this, a memory
 hierarchy is used to provide the illusion of a very fast and very
-large memory. 
-{\bf (references, citations)}
+large memory (see figure~\ref{img:mem_hier}). 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.3]{./img/mem_gap}
+	\caption{The memory gap}
+	\label{img:mem_gap}
+\end{figure}
 
 The illusion will only partially hold, however, as the processor is
 delayed for the entire main memory access time when memory contents it
@@ -28,8 +33,14 @@ memory access history and statistics, and using this to make educated
 guesses about the future. 
 {\bf (references, citations)}
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.3]{./img/mem_hier}
+	\caption{The memory hierarchy}
+	\label{img:mem_hier}
+\end{figure}
+
 In this paper, we are going to investigate how different kinds of
-prefetching strategies affects the efficiency of the prefetcher
-when run on several different programs from the SPEC CPU2000 benchmark
-suite.
-{\bf (references, citations)}
+prefetching strategies affects the efficiency of the prefetcher when
+run on several different programs from the SPEC CPU2000 benchmark
+suite.  {\bf (references, citations)}
