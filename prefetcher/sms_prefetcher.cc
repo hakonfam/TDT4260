@@ -2,8 +2,7 @@
 #include "interface.hh"
 #include <bitset>
 #include <vector>
-panic: same statistic name used twice! name=.fetch_hits
-
+#include <cstdio>
 struct PrefetchDecision
 {
   explicit PrefetchDecision()
@@ -108,12 +107,12 @@ static void insertGeneration(GenerationEntry entry, vector<GenerationEntry> &tab
 	GenerationEntry element = table.at(candidateIndex);
 	if(element.pc == 0 && element.offset == 0) // assume this is not in use
 	{
-	    //DPRINTF(HWPrefetch, "Inserted at index %d\n", candidateIndex);
+	    printf( "Inserted at index %d\n", candidateIndex);
 	    table.at(candidateIndex) = entry; 
 	    return;
 	}
     }
-    //DPRINTF(HWPrefetch, "Inserted at index %d\n", index);
+    printf( "Inserted at index %d\n", index);
     table.at(index) = entry;
 } 
 
@@ -169,18 +168,19 @@ PrefetchDecision SMS_Prefetcher:: react_to_access(AccessStat stat){
     if(isTriggerAccess(stat)){
 	int index = findRecordedPattern(stat);
 	if( index != -1){
-	    //DPRINTF(HWPrefetch, "Found recorded pattern at index %d in page history table \n" index);
+	  printf( "Found recorded pattern at index %d in page history table PC: %lu TAG: %lu OFFSET: %lu\n",index, stat.pc, getRegion(stat.mem_addr), getOffset(stat.mem_addr));
 	    addr = getRecordedPattern(stat, index);
 	}
-	//DPRINTF(HWPrefetch, "Starting to Record\n");
+	printf( "Starting to Record PC: %lu TAG: %lu OFFSET: %lu\n", stat.pc, getRegion(stat.mem_addr), getOffset(stat.mem_addr));
 	startRecording(stat);
     } else {
 	// recording 
 	if( hasEvictions(stat)){
-	    //DPRINTF(HWPrefetch, "Found evictions, stopping to record");
+	    printf( "Found evictions, stopping to record PC: %lu TAG: %lu OFFSET: %lu\n", stat.pc, getRegion(stat.mem_addr), getOffset(stat.mem_addr));
 	    stopRecording(stat);
 	}
 	else {
+	  printf("Adding to recording, PC: %lu TAG: %lu OFFSET: %lu\n", stat.pc, getRegion(stat.mem_addr), getOffset(stat.mem_addr));
 	    addToRecording(stat);
 	}
 	  
@@ -192,7 +192,7 @@ bool SMS_Prefetcher::hasEvictions (AccessStat stat) {
     int index = findGeneration(stat, filter_table);
     if(index != -1) {
 	GenerationEntry entry = filter_table.at(index);
-	Addr memAddr = entry.tag | (entry.offset);
+	Addr memAddr = entry.tag | (entry.offset * BLOCK_SIZE);
 	return !in_cache(memAddr);
     } 
 
@@ -200,7 +200,7 @@ bool SMS_Prefetcher::hasEvictions (AccessStat stat) {
     if(index != -1){
 	GenerationEntry entry = accumulation_table.at(index);
 	Addr baseAddr = stat.mem_addr;
-	for(int i = 0; i < entry.pattern.size() ; i++){
+	for(size_t i = 0; i < entry.pattern.size() ; i++){
 	    if(entry.pattern.test(i)){
 		Addr memAddr = baseAddr | (i * BLOCK_SIZE);
 		if(!in_cache(memAddr)){
@@ -216,7 +216,7 @@ bool SMS_Prefetcher::hasEvictions (AccessStat stat) {
 int SMS_Prefetcher::findRecordedPattern (AccessStat stat) {
     int index = 0;
     for(vector<HistoryEntry>::const_iterator it = page_history_table.begin(); it != page_history_table.end(); it++, index++){
-	if(it->pc == stat.pc && it->offset == stat.mem_addr){
+      if(it->pc == stat.pc && it->offset == getOffset(stat.mem_addr)){
 	    return index;
 	}
     }
@@ -228,9 +228,11 @@ vector<Addr> SMS_Prefetcher::getRecordedPattern(AccessStat stat, int index) {
     HistoryEntry entry = page_history_table.at(index);
     vector<Addr> addresses;
     Addr baseAddr = getRegion(stat.mem_addr);
-    for(int i = 0; i < entry.spatial_pattern.size(); i++){
-	Addr memAddr = baseAddr | (i * BLOCK_SIZE);
-	addresses.push_back(memAddr);
+    for(size_t i = 0; i < entry.spatial_pattern.size(); i++){
+	if(entry.spatial_pattern.test(i)){
+		Addr memAddr = baseAddr | (i * BLOCK_SIZE);
+		addresses.push_back(memAddr);
+	}
     }
     return addresses;
 
@@ -253,30 +255,23 @@ void SMS_Prefetcher::startRecording(AccessStat stat) {
 void SMS_Prefetcher::stopRecording(AccessStat stat) {
     int index = findGeneration(stat, filter_table );
     if (index != -1){
-	//DPRINTF(HWPrefetch, "Access was in filter table, discarding\n");
+	printf( "Access was in filter table, discarding\n");
 	GenerationEntry emptyEntry;
 	filter_table.at(index) = emptyEntry;
 	return;
     }
     index = findGeneration(stat, accumulation_table);
     if ( index != -1){
-	GenerationEntry entry = accumulation_table.at(index);
+      
+      	GenerationEntry entry = accumulation_table.at(index);
+	accumulation_table.at(index) = GenerationEntry();
 	HistoryEntry hentry(stat.pc, getOffset(stat.mem_addr));
 	hentry.spatial_pattern = entry.pattern;
-
-	for(int i = 0; i < history_table_size; i++){
-	    int candidateIndex = (history_table_index + i ) % history_table_size;
-	    HistoryEntry element = page_history_table.at(candidateIndex);
-	    if(element.pc == 0 && element.offset == 0){
-		//DPRINTF(HWPrefetch, "Inserting into page history table at index %d\n", candidateIndex);
-		page_history_table.at(candidateIndex) = hentry;
-		history_table_index = (history_table_index + 1) % history_table_size; 
-		return;
-	    }
-	}
-	//DPRINTF(HWPrefetch, "Inserting into page history table at index %d\n", index);
+	
+	printf( "Inserting into page history table at index %d\n with pattern %s", index, hentry.spatial_pattern.to_string().c_str());
 	page_history_table.at(history_table_index) = hentry;
 	history_table_index = (history_table_index + 1) % history_table_size; 
+      
     }
 }
 
@@ -285,7 +280,7 @@ void SMS_Prefetcher::addToRecording(AccessStat stat) {
     if (index != -1){
 	GenerationEntry entry = filter_table.at(index);
 	if( entry.offset != getOffset(stat.mem_addr)){
-	    //DPRINTF(HWPrefetch, "Second access in region, moving to accumulation table\n");
+	    printf( "Second access in region, moving to accumulation table\n");
 	    // second access within region, move to accumulation table
 	    filter_table.at(index) = GenerationEntry();
 	    entry.pattern |= (1 << entry.offset);
@@ -298,7 +293,7 @@ void SMS_Prefetcher::addToRecording(AccessStat stat) {
     }
     index = findGeneration( stat, accumulation_table);
     if(index != -1){
-	//DPRINTF(HWPrefetch, "Updating bit pattern \n");
+	printf( "Updating bit pattern \n");
 	// update bit pattern
 	accumulation_table.at(index).pattern |= (1 << getOffset(stat.mem_addr)); 
     }
@@ -325,8 +320,7 @@ extern "C" void prefetch_init(void){ /* empty */ }
  */
 extern "C" void prefetch_access(AccessStat stat){ 
     PrefetchDecision d = prefetcher.react_to_access(stat);
-    //DPRINTF(HWPrefetch, "Decided to prefetch %u addresses\n", 
-//            d.prefetchAddresses.size());
+    printf( "Decided to prefetch %lu addresses\n", d.prefetchAddresses.size());
 
     typedef std::vector<Addr>::const_iterator It;
     for (It it = d.prefetchAddresses.begin(),
