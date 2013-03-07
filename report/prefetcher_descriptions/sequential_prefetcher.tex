@@ -1,12 +1,12 @@
-\subsection{Sequential Prefetcher}
-\label{sec:sequentialPrefetcher}
-The sequential prefetcher is based on the fact that memory accesses
-often follow a sequential pattern. When accessing the members of an
+\subsection{Stride Prefetcher}
+\label{sec:stridePrefetcher}
+The stride prefetcher is based on the fact that memory accesses
+often follow a stride-n pattern (where n is the number of addresses between
+the accessed addressess). When accessing the members of an
 array, or iterating through a loop, most of the memory accesses will
-follow a stride-n pattern (where n is the number of addresses between
-the accessed addressess).
+follow a stride-n pattern.
 
-The sequential prefetcher keeps track of the last \emph{n} values, and
+The stride prefetcher keeps track of the last \emph{x} values, and
 also keeps track of for how long the current stride has been
 ongoing. The prefetchers agressiveness can be configured by
 configuring the amount of strides that needs to be discovered before
