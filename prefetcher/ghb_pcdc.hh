@@ -211,7 +211,7 @@ public:
     void decrease_aggressiveness() {
         numBlocksToPrefetch_++;
         DPRINTF(HWPrefetch, "Increased aggressiveness to %u", 
-                numBlocksToPrefetch_)
+                numBlocksToPrefetch_);
     }
     PrefetchDecision react_to_access(AccessStat stat);
 private:
