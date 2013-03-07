@@ -107,12 +107,12 @@ static void insertGeneration(GenerationEntry entry, vector<GenerationEntry> &tab
 	GenerationEntry element = table.at(candidateIndex);
 	if(element.pc == 0 && element.offset == 0) // assume this is not in use
 	{
-	    printf( "Inserted at index %d\n", candidateIndex);
+	    //printf( "Inserted at index %d\n", candidateIndex);
 	    table.at(candidateIndex) = entry; 
 	    return;
 	}
     }
-    printf( "Inserted at index %d\n", index);
+    //printf( "Inserted at index %d\n", index);
     table.at(index) = entry;
 } 
 
@@ -168,19 +168,19 @@ PrefetchDecision SMS_Prefetcher:: react_to_access(AccessStat stat){
     if(isTriggerAccess(stat)){
 	int index = findRecordedPattern(stat);
 	if( index != -1){
-	  printf( "Found recorded pattern at index %d in page history table PC: %lu TAG: %lu OFFSET: %lu\n",index, stat.pc, getRegion(stat.mem_addr), getOffset(stat.mem_addr));
+	  //printf( "Found recorded pattern at index %d in page history table PC: %lu TAG: %lu OFFSET: %lu\n",index, stat.pc, getRegion(stat.mem_addr), getOffset(stat.mem_addr));
 	    addr = getRecordedPattern(stat, index);
 	}
-	printf( "Starting to Record PC: %lu TAG: %lu OFFSET: %lu\n", stat.pc, getRegion(stat.mem_addr), getOffset(stat.mem_addr));
+	//printf( "Starting to Record PC: %lu TAG: %lu OFFSET: %lu\n", stat.pc, getRegion(stat.mem_addr), getOffset(stat.mem_addr));
 	startRecording(stat);
     } else {
 	// recording 
 	if( hasEvictions(stat)){
-	    printf( "Found evictions, stopping to record PC: %lu TAG: %lu OFFSET: %lu\n", stat.pc, getRegion(stat.mem_addr), getOffset(stat.mem_addr));
+	    //printf( "Found evictions, stopping to record PC: %lu TAG: %lu OFFSET: %lu\n", stat.pc, getRegion(stat.mem_addr), getOffset(stat.mem_addr));
 	    stopRecording(stat);
 	}
 	else {
-	  printf("Adding to recording, PC: %lu TAG: %lu OFFSET: %lu\n", stat.pc, getRegion(stat.mem_addr), getOffset(stat.mem_addr));
+	  //printf("Adding to recording, PC: %lu TAG: %lu OFFSET: %lu\n", stat.pc, getRegion(stat.mem_addr), getOffset(stat.mem_addr));
 	    addToRecording(stat);
 	}
 	  
@@ -255,7 +255,7 @@ void SMS_Prefetcher::startRecording(AccessStat stat) {
 void SMS_Prefetcher::stopRecording(AccessStat stat) {
     int index = findGeneration(stat, filter_table );
     if (index != -1){
-	printf( "Access was in filter table, discarding\n");
+	//printf( "Access was in filter table, discarding\n");
 	GenerationEntry emptyEntry;
 	filter_table.at(index) = emptyEntry;
 	return;
@@ -268,7 +268,7 @@ void SMS_Prefetcher::stopRecording(AccessStat stat) {
 	HistoryEntry hentry(stat.pc, getOffset(stat.mem_addr));
 	hentry.spatial_pattern = entry.pattern;
 	
-	printf( "Inserting into page history table at index %d\n with pattern %s", index, hentry.spatial_pattern.to_string().c_str());
+	//printf( "Inserting into page history table at index %d\n with pattern %s", index, hentry.spatial_pattern.to_string().c_str());
 	page_history_table.at(history_table_index) = hentry;
 	history_table_index = (history_table_index + 1) % history_table_size; 
       
@@ -280,7 +280,7 @@ void SMS_Prefetcher::addToRecording(AccessStat stat) {
     if (index != -1){
 	GenerationEntry entry = filter_table.at(index);
 	if( entry.offset != getOffset(stat.mem_addr)){
-	    printf( "Second access in region, moving to accumulation table\n");
+	    //printf( "Second access in region, moving to accumulation table\n");
 	    // second access within region, move to accumulation table
 	    filter_table.at(index) = GenerationEntry();
 	    entry.pattern |= (1 << entry.offset);
@@ -293,7 +293,7 @@ void SMS_Prefetcher::addToRecording(AccessStat stat) {
     }
     index = findGeneration( stat, accumulation_table);
     if(index != -1){
-	printf( "Updating bit pattern \n");
+	//printf( "Updating bit pattern \n");
 	// update bit pattern
 	accumulation_table.at(index).pattern |= (1 << getOffset(stat.mem_addr)); 
     }
@@ -320,7 +320,7 @@ extern "C" void prefetch_init(void){ /* empty */ }
  */
 extern "C" void prefetch_access(AccessStat stat){ 
     PrefetchDecision d = prefetcher.react_to_access(stat);
-    printf( "Decided to prefetch %lu addresses\n", d.prefetchAddresses.size());
+    //printf( "Decided to prefetch %lu addresses\n", d.prefetchAddresses.size());
 
     typedef std::vector<Addr>::const_iterator It;
     for (It it = d.prefetchAddresses.begin(),

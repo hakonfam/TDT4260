@@ -1,4 +1,18 @@
 \subsection{Spatial Memory Streaming Prefetcher}
 \label{sec:smsPrefetcher}
+
 The Spatial Memory Streaming (SMS) Prefetcher is a spatial locality
-prefetcher...  {\bf (references, citations)}
+prefetcher which tries to exloit access patterns within memory
+pages. When designing operating systems and database management
+systems the system designer will use memory page as the working unit
+to try and limit the amount of bandwidth to the disk. In this way a
+datastructure will placed within a page instead of spanning across two
+pages. When searching across large and complex datastructures a page
+might be accessed in a repitive manner. For example a database search
+might always access an index at the start of the page and a pointer
+collection at the end of the page for every page it searches trought
+while the program runs a in a loop. SMS tries to record such access
+patterns and use the same pattern the next time the program is at the
+same place, but with a different memory address to be accessed it can
+prefetch the recorded access pattern within the page. {\bf (references,
+  citations)}
