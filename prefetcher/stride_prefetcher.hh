@@ -9,8 +9,8 @@ class StridePrefetcher : public Prefetcher {
 								hitsBeforePrefetch, 
 								numberOfStrides,
 								currentDelta;
-  StrideStack* stack;
   bool strideInProgress;
+	Addr lastAccessedAddress;
   void updateNumberOfStrides(Addr addr);
 	PrefetchDecision getPrefetchedAddresses(Addr address);
  public:
