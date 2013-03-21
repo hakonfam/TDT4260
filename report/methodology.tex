@@ -9,19 +9,80 @@
 \label{sec:methodology}
 
 To discover what the effect of using different prefetching strategies
-for different applications are, we used the M5 simulator. This
-simulator is a software implementation loosely based on the Alpha
-21264 processor \cite{TDT4260 Staff} (should M5 description be in
-introduction?). In order to test our prefetcher implementations, each
-of them were implemented as a submodule of M5, and built into the
-final simulator binary. For each of the simulators built this way, we
-executed a suite of programs from the SPEC CPU2000 benchmark. The
-simulator software automatically tracked key statistics during the
-program execution, such as cache misses, prefetches issued, and clock
-cycles used for running the program. By comparing the number of cycles
-used when executing the program with our prefetchers included in the
-simulator to the number of cycles used without a prefetcher, we could
-calculate the speedup gains due to the prefetcher for the different
-programs. (Should we say that they tests were run on a cluster?)
-{\bf (references, citations)}
+for different applications are, we used a modified version of the M5
+simulator, version 2.0\cite{M5} as a testing platform. This simulator
+is a software implementation loosely based on the Alpha 21264
+processor\cite{Alpha}. The version used was provided by the course
+staff, and included an interface to the L2 cache prefetching
+functionality of the simulator. By using this interface, we could
+integrate our prefetchers into the processor simulator, such that the
+resulting binaries would be a simulator of the processor with a
+specific prefetcher algorithm in control of prefetching for the L2 cache.
 
+For each of the simulators built this way, we executed a suite of
+programs from the SPEC CPU2000 benchmark. The programs used are listed
+in table~\ref{tab:benchmarks}. The simulator software automatically
+tracked key statistics during the program execution, such as cache
+misses, prefetches issued, and clock cycles used for running the
+program. By comparing the number of cycles used when executing the
+program with our prefetchers included in the simulator to the number
+of cycles used without a prefetcher, we could calculate the speedup
+gains due to the prefetcher for the different programs.
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|c|}
+    \hline
+    {\bf Benchmarks} \\ \hline
+    ammp \\ \hline
+    applu \\ \hline
+    apsi \\ \hline
+    art110 \\ \hline
+    art470 \\ \hline
+    bzip2\_graphic \\ \hline
+    bzip2\_program \\ \hline
+    bzip2\_source \\ \hline
+    galgel \\ \hline
+    swim \\ \hline
+    wupwise \\ \hline
+  \end{tabular}
+  \caption{The benchmarks used to evaluate the prefetcher efficiency.}
+  \label{tab:benchmarks}
+\end{table}
+
+% Give prefetcher configurations
+When implementing our prefetchers, there were a number of
+implementation parameters which had to be set (e.g. the size of the
+data structures used in the algorithm, the number of addresses to
+prefetch). To get fair comparisons between the different strategies,
+we wanted to find the settings which yielded the best results for each
+prefetcher. To make the prefetchers more realistic, we were only
+allowed to use 8 KiB of storage internally in our prefetcher. This set
+the bounds for our prefetcher configuration space. Our strategy for
+finding the optimal settings for the given prefetcher was to set them
+initially to more or less arbitrary values within the permissible
+range, and from then on attempt to locate at least a local maximum by
+varying the parameters in turn. The configurations discovered like
+this are given in \autoref{tab:settings}
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Prefetcher} & \textbf{Settings} \\ \hline
+    Stride & Wait for 4 consecutive strides, prefetch 15 blocks \\ \hline
+    GHB/PCDC &  \\ \hline
+    SMS & \\ \hline
+    Markov & \\ \hline
+  \end{tabular}
+  \caption{The settings yielding optimal overall result for each prefetcher.}
+  \label{tab:settings}
+\end{table}
+
+
+Having 
+
+% (should M5 description be in introduction?)
+
+% (Should we say that they tests were run on a cluster?)  {\bf
+% (references, citations)}
