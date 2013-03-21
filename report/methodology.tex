@@ -44,6 +44,7 @@ gains due to the prefetcher for the different programs.
     bzip2\_source \\ \hline
     galgel \\ \hline
     swim \\ \hline
+    twolf \\ \hline
     wupwise \\ \hline
   \end{tabular}
   \caption{The benchmarks used to evaluate the prefetcher efficiency.}
@@ -62,25 +63,58 @@ the bounds for our prefetcher configuration space. Our strategy for
 finding the optimal settings for the given prefetcher was to set them
 initially to more or less arbitrary values within the permissible
 range, and from then on attempt to locate at least a local maximum by
-varying the parameters in turn. The configurations discovered like
-this are given in \autoref{tab:settings}
+varying the parameters in turn. Due to the enormous possible set of
+values, only a few were tried for each degree of freedom---these are
+listed in \autoref{tab:stridesettings}, \autoref{tab:ghbsettings},
+\autoref{tab:smssettings} and \autoref{tab:markovsettings}. The
+combination of parameters which yielded the highest average speedup
+are marked in bold.
 
 \begin{table}[htbp]
   \centering
   \begin{tabular}{|c|c|}
     \hline
-    \textbf{Prefetcher} & \textbf{Settings} \\ \hline
-    Stride & Wait for 4 consecutive strides, prefetch 15 blocks \\ \hline
-    GHB/PCDC &  \\ \hline
-    SMS & \\ \hline
-    Markov & \\ \hline
+    \textbf{Prefetch Degree} & \textbf{Consecutive strides} \\ \hline
+    10 & 3 \\ \hline
+    \textbf{15} & \textbf{4} \\ \hline
+    20 & 5 \\ \hline % TODO: Not all these settings have been attempted yet...
   \end{tabular}
-  \caption{The settings yielding optimal overall result for each prefetcher.}
-  \label{tab:settings}
+  \caption{The various parameters attempted for the stride prefetcher. The prefetch degree is the number of consecutive blocks prefetched, and the consecutive strides is how many consecutive constant step memory misses must occur before a prefetch is issued.}
+  \label{tab:stridesettings}
 \end{table}
 
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Table Size} & \textbf{Prefetch Degree} \\ \hline
+    300 & 3 \\ \hline
+    \textbf{350} & 5 \\ \hline
+    400 & \textbf{10} \\ \hline
+        & 15 \\ \hline
+  \end{tabular}
+  \caption{The various parameters attempted for the GHB/PCDC prefetcher. The table size is the number of entries in both the GHB and the index table---unequal sizes were not tested. The prefetch degree is the number of blocks to issue prefetches for, once you find a previous history match.}
+  \label{tab:ghbsettings}
+\end{table}
 
-Having 
+%TODO: Search parameters for 
+
+% \begin{table}[htbp]
+%   \centering
+%   \begin{tabular}{|c|c|}
+%     \hline
+%     \textbf{Prefetcher} & \textbf{Settings} \\ \hline
+%     Stride & Wait for 4 consecutive strides, prefetch 15 blocks \\ \hline
+%     GHB/PCDC & 350 entries in GHB and index table, prefetch 10 blocks  \\ \hline
+%     SMS & \\ \hline
+%     Markov & \\ \hline
+%   \end{tabular}
+%   \caption{The settings yielding optimal overall result for each prefetcher.}
+%   \label{tab:settings}
+% \end{table}
+
+
+%Having  (... cannot remember what this was supposed to start :X)XS
 
 % (should M5 description be in introduction?)
 
