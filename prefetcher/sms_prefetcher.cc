@@ -175,7 +175,7 @@ PrefetchDecision SMS_Prefetcher:: react_to_access(AccessStat stat){
 	startRecording(stat);
     } else {
 	// recording 
-	if( hasEvictions(stat)){
+	if(hasEvictions(stat)){
 	    //printf( "Found evictions, stopping to record PC: %lu TAG: %lu OFFSET: %lu\n", stat.pc, getRegion(stat.mem_addr), getOffset(stat.mem_addr));
 	    stopRecording(stat);
 	}
@@ -228,7 +228,7 @@ vector<Addr> SMS_Prefetcher::getRecordedPattern(AccessStat stat, int index) {
     HistoryEntry entry = page_history_table.at(index);
     vector<Addr> addresses;
     Addr baseAddr = getRegion(stat.mem_addr);
-    printf("\nRecorded Pattern = %s", entry.spatial_pattern.to_string().c_str());
+    //printf("\nRecorded Pattern = %s", entry.spatial_pattern.to_string().c_str());
     //printf("\nEntry offset = %lu\n", entry.offset,
     for(size_t i = 0; i < entry.spatial_pattern.size(); i++){
 	if(entry.spatial_pattern.test(i)){
@@ -324,13 +324,13 @@ extern "C" void prefetch_access(AccessStat stat){
     PrefetchDecision d = prefetcher.react_to_access(stat);
     //printf( "Decided to prefetch %lu addresses\n", d.prefetchAddresses.size());
     if(d.prefetchAddresses.size()){
-	printf("\nStarting to fetch a pattern of addresses with stat.mem_addr = %lu\n", stat.mem_addr);
+	//printf("\nStarting to fetch a pattern of addresses with stat.mem_addr = %lu\n", stat.mem_addr);
     }
     typedef std::vector<Addr>::const_iterator It;
     for (It it = d.prefetchAddresses.begin(),
              e = d.prefetchAddresses.end(); it != e; ++it) 
     {
-      printf("Considering prefetching address %lu\n", *it);
+      //printf("Considering prefetching address %lu\n", *it);
         if (!in_cache(*it) && !in_mshr_queue(*it))
         {
             //Should include check for *it <= MAX_PHYS_MEM_ADDR,
@@ -338,7 +338,7 @@ extern "C" void prefetch_access(AccessStat stat){
             //NOT
             if (*it <= MAX_PHYS_MEM_ADDR)
             {
-		printf("Prefetching address %lu\n", *it);
+		//printf("Prefetching address %lu\n", *it);
                 issue_prefetch(*it);
             }
         }
