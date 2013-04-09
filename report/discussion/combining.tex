@@ -1,0 +1,20 @@
+\paragraph{Combining Prefetchers}
+\label{par:prefcombo}
+Since the prefetchers have somewhat varying performance on the
+different programs, it might be a good idea to attempt to combine
+them. This could be done in two ways. One way would be to try and
+merge the two algorithms into a single prefetching algorithm. Another
+way would be to create a controlling unit utilizing heuristics to
+choose which of the two prefetchers should be used at a given time.
+
+The first such strategy is especially applicable to the stride and GHB
+prefetchers. The GHB is in essence almost a stride prefetcher, since a
+constant delta stride will also be recognized. However, as there would
+only be two more items left in the delta table after the point of
+matching, only two addresses will be prefetched. According to
+\autoref{tab:stridesettings}, this is most likely fewer addresses than
+would be optimal. Therefore, one could try to recognize this special
+case by checking when the final four elements of the delta table are
+identical, and prefetch a larger set of blocks the constant stride
+apart. The results from running the GHB prefetcher with this change
+included is shown in \autoref{tab:ghbstridetab}.

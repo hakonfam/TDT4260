@@ -76,13 +76,13 @@ are marked in bold.
   \centering
   \begin{tabular}{|c|c|c|}
     \hline
-    \textbf{Prefetch Degree} & \textbf{Consecutive strides}  & \textbf{Average speedup}\\ \hline
-    10 & 3 & 1.026\\ \hline
-    \textbf{15} & \textbf{4} & \textbf{1.035}\\ \hline
-    15 & 5 & 1.030\\ \hline % TODO: Not all these settings have been attempted yet...
+    \textbf{Prefetch Degree} & \textbf{Consecutive strides} \\ \hline
+    10 & 3 \\ \hline
+    \textbf{15} & \textbf{4} \\ \hline
+    15 & 5 \\ \hline % TODO: Not all these settings have been attempted yet...
   \end{tabular}
   \label{tab:stridesettings}
-  \caption{The various parameters attempted for the stride prefetcher. The prefetch degree is the number of consecutive blocks prefetched, and the consecutive strides is how many consecutive constant step memory misses must occur before a prefetch is issued.}
+  \caption{The various parameters attempted for the ABSP. The prefetch degree is the number of consecutive blocks prefetched, the consecutive strides is how many consecutive constant step memory misses must occur before a prefetch is issued.}
 \end{table}
 
 \begin{table}[htbp]
@@ -99,7 +99,20 @@ are marked in bold.
   \label{tab:ghbsettings}
 \end{table}
 
-%TODO: Search parameters for 
+\begin{table}[htbp]
+  \caption{\emph{}}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \textbf{Region (log2)} & \textbf{History Table} & \textbf{Filter Table} & \textbf{Accumulation Table} \\ \hline
+    4  & 128 & 16 & 16 \\ \hline
+    8  & \emph{256} & 32&  \emph{32}\\ \hline
+    \emph{11} &     & \emph{64}&  64\\ \hline
+  \end{tabular}
+  \label{tab:smssettings}
+\end{table}
+
+
 
 % \begin{table}[htbp]
 %   \centering
