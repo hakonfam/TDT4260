@@ -61,10 +61,9 @@ prefetcher. To make the prefetchers more realistic, we were only
 allowed to use 8 KiB of storage internally in our prefetcher. This set
 the bounds for our prefetcher configuration space. 
 
-Our strategy for
-finding the optimal settings for the given prefetcher was to set them
-initially to more or less arbitrary values within the permissible
-range, and attempt to locate at least a local maximum by
+Our strategy for finding the optimal settings for the given prefetcher
+was to set them initially to more or less arbitrary values within the
+permissible range, and attempt to locate at least a local maximum by
 varying the parameters in turn. Due to the enormous possible set of
 values, only a few were tried for each degree of freedom---these are
 listed in \autoref{tab:stridesettings}, \autoref{tab:ghbsettings},
@@ -73,6 +72,7 @@ combination of parameters which yielded the highest average speedup
 are marked in bold.
 
 \begin{table}[htbp]
+  \caption{The various parameters attempted for the ABSP. The prefetch degree is the number of consecutive blocks prefetched, the consecutive strides is how many consecutive constant step memory misses must occur before a prefetch is issued.}
   \centering
   \begin{tabular}{|c|c|c|}
     \hline
@@ -82,7 +82,6 @@ are marked in bold.
     15 & 5 \\ \hline % TODO: Not all these settings have been attempted yet...
   \end{tabular}
   \label{tab:stridesettings}
-  \caption{The various parameters attempted for the ABSP. The prefetch degree is the number of consecutive blocks prefetched, the consecutive strides is how many consecutive constant step memory misses must occur before a prefetch is issued.}
 \end{table}
 
 \begin{table}[htbp]
@@ -106,8 +105,8 @@ are marked in bold.
     \hline
     \textbf{Region (log2)} & \textbf{History Table} & \textbf{Filter Table} & \textbf{Accumulation Table} \\ \hline
     4  & 128 & 16 & 16 \\ \hline
-    8  & \emph{256} & 32&  \emph{32}\\ \hline
-    \emph{11} &     & \emph{64}&  64\\ \hline
+    8  & \textbf{256} & 32&  \textbf{32}\\ \hline
+    \textbf{11} &     & \textbf{64}&  64\\ \hline
   \end{tabular}
   \label{tab:smssettings}
 \end{table}

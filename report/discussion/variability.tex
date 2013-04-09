@@ -2,21 +2,61 @@
 \paragraph{Variability of Prefetcher Performance}
 \label{par:varprefperf}
 
-The more complex prefetchers perform better on average. Specifically, the GHB
-prefetcher has the highest performance. However, the difference is not
-very large except for a few benchmarks. These exceptions are most
-likely occuring because the benchmark programs have a memory access pattern
-which corresponds well with the prefetcher which excells.
+%- Introduction?
+
+
+%Should the data in here be in result instead? Percentages etc.
+From these results, there are a number of interesting observations one
+might make. The first item of interest relates to the average
+prefetcher speedups. As one might expect, it is the most complex,
+general purpose prefetcher, namely the GHB/PCDC prefetcher, which
+yields the highest average speedup. With an average speedup of $1.54$,
+it outperforms ABSP by $54.3\%$, SMS by $500\%$ and Markov by
+$some\%$. As it attempts to improve upon weaknesses in earlier methods
+as the ABSP and Markov prefetchers~\cite{Nesbit}, this .,
+
+our results show that it is successful in
+its quest. 
+
+  can be taken as a testament to its success.
+
+
+ We can therethe potential of recognizing more exotic
+access patterns and integrating them into prefetch strategies which ,
+but still
+
+
+The more complex prefetchers perform better on average. Specifically,
+the GHB prefetcher has the highest performance. However, the
+difference is not very large except for a few benchmarks. These
+exceptions are most likely occuring because the benchmark programs
+have a memory access pattern which corresponds well with the
+prefetcher which excels.
+Blowup ideas:
+       - Define complex - LoC table. Also, SMS is most complex, but worst?
+       - GHB highest by how much? Specify the avg values, hard to read on the graph.
+       - Aren't the differences very large? Specify percentages to justify such a claim
+       - The last sentence needs clarification
 
 %For instance, on the benchmark ammp the GHB prefetcher is able to
 %achieve many times the speedup of the other prefetchers. This program
 %operates on the 
 
+ Explanation of ammp: refer to GHB paper stating that this has the
+ highest potential for speedup? Perhaps the paper also states the
+ memory access pattern in ammp?
+
 One benchmark on which the GHB prefetcher was outperformed was the
 galgel benchmark, on which the stride prefetcher got an average
-speedup almost five times as high. 
+speedup almost five times as high.
 
-An interesting remark is that even though the ABSP is a simplication of the prefetcher that GHB is an extension of, it has similar performance gains on several of the benchmark programs.  
+An interesting remark is that even though the ABSP is a simplication
+of the prefetcher that GHB is an extension of, it has similar
+performance gains on several of the benchmark programs.
+
+SMS Prefetcher is not performing too well on our benchmark
+programs. This is natural.
+
 %  - Are there any variance as to which programs they yield good speedup
 %  on?  
 
