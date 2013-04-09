@@ -129,7 +129,7 @@ static int findGeneration(AccessStat stat, vector<GenerationEntry> &table){
 
 SMS_Prefetcher::SMS_Prefetcher() :
   attempts(0), hits(0), 
-  history_table_size(16*1024), 
+  history_table_size(256), 
   filter_table_size(32), accumulation_table_size(64),
   filter_table_index(0), accumulation_table_index(0),
   history_table_index(0),
@@ -269,11 +269,15 @@ void SMS_Prefetcher::stopRecording(AccessStat stat) {
 	accumulation_table.at(index) = GenerationEntry();
 	HistoryEntry hentry(entry.pc, entry.offset);
 	hentry.spatial_pattern = entry.pattern;
-	
+	int existing = findRecordedPattern(stat);
+	if( existing != -1){
+	    //overwrite existing pattern
+	    page_history_table.at(existing) = hentry;
+	} else{
 	//printf( "Inserting into page history table at index %d\n with pattern %s", index, hentry.spatial_pattern.to_string().c_str());
 	page_history_table.at(history_table_index) = hentry;
 	history_table_index = (history_table_index + 1) % history_table_size; 
-      
+	}
     }
 }
 
