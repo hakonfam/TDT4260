@@ -22,8 +22,7 @@ large memory (see figure~\ref{img:mem_hier}).
 The illusion will only partially hold, however, as the processor is
 delayed for the entire main memory access time when the memory contents required
 is not present in any of the caches. One technique
-which has been introduced in order to leverage this speed discrepancy
-by utilising caches more efficiently is prefetching. This technique
+which has been introduced in order to face this problem is prefetching. Prefetching improves the utilization of the caches. This technique
 attempts to improve the cache hit rate by predicting what memory
 addresses the processor will want to access in the near future, and
 issuing fetches from the main memory before the processor actually
