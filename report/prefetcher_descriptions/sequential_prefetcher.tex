@@ -1,6 +1,6 @@
-\subsection{Stride Prefetcher}
+\subsection{Address based stride prefetcher}
 \label{sec:stridePrefetcher}
-The stride prefetcher is based on the fact that memory accesses
+The address based stride prefetcher (ABSP) is a simplified version of the Stride Directory Prefetcher. The ABSP is based on the fact that memory accesses
 often follow a stride-n pattern (where n is the number of addresses between
 the accessed addressess). When accessing the members of an
 array, or iterating through a loop, most of the memory accesses will
@@ -12,9 +12,9 @@ follow a stride-n pattern. An example can be shown in figure~\ref{fig:stride}.
 \caption{A memory access pattern with a stride of n=2}
 \end{figure}
 
-The stride prefetcher keeps track of the last accessed address, what the delta of the addresses in the current stride is, and
+The ABSP keeps track of the last accessed address, what the delta of the addresses in the current stride is, and
 also keeps track of for how long the current stride has been
-ongoing. 
+ongoing. Compared to the Stride Directory Prefetcher, ABSP only requires a costant amount of memory (only the last accessed address is saved) and has a low degree of complexity.
 
 For each memory access, the memory address is compared to the last
 memory address. If the current stride value corresponds to the
