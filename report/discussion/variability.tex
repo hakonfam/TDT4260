@@ -1,0 +1,27 @@
+
+\paragraph{Variability of Prefetcher Performance}
+\label{par:varprefperf}
+
+The more complex prefetchers perform better on average. Specifically, the GHB
+prefetcher has the highest performance. However, the difference is not
+very large except for a few benchmarks. These exceptions are most
+likely occuring because the benchmark programs have a memory access pattern
+which corresponds well with the prefetcher which excells.
+
+%For instance, on the benchmark ammp the GHB prefetcher is able to
+%achieve many times the speedup of the other prefetchers. This program
+%operates on the 
+
+One benchmark on which the GHB prefetcher was outperformed was the
+galgel benchmark, on which the stride prefetcher got an average
+speedup almost five times as high. 
+
+
+%  - Are there any variance as to which programs they yield good speedup
+%  on?  
+
+%  According to the results in \autoref{fig:initResults}.  The more
+%  complex ones are usually better overall, however there are some
+%  programs which 
+
+% - How would combining them work?
