@@ -2,17 +2,59 @@
 \label{sec:smsPrefetcher}
 
 The Spatial Memory Streaming (SMS) Prefetcher is a spatial locality
-prefetcher which tries to exloit access patterns within memory
-pages. When designing operating systems and database management
-systems, the system designer will use memory page as the working unit
-to limit the amount of bandwidth to the disk. In this way a
-datastructure will be placed within a page instead of spanning across several
-pages. When searching across large and complex datastructures a page
-might be accessed in a repeditive manner. For example a database search
-might always access an index at the start of the page and a pointer
-collection at the end of the page for every page it searches through
-while the program runs a in a loop. SMS tries to record such access
-patterns and use the same pattern the next time the program is at the
-same place, but with a different memory address to be accessed it can
-prefetch the recorded access pattern within the page. {\bf (references,
-  citations)}
+prefetcher which tries to exloit the relationship between a memory
+page, and a cache line. 
+
+Since a memory page is larger than a cache line, the memory page is
+fragmented across several cache lines, and even though the page is in
+memory, only parts of it may be in the cache.  When designing
+operating systems and database management systems, the system designer
+will optimize the design for the memory page size in order to limit
+the amount of bandwidth and access to the disk. In order to achieve
+this, large and complex data structures will have to be chunked up into
+smaller and equal structures that fit into a single memory page.
+
+When performing large scale operations on these data structures, for
+example a database search, the program might sit in a loop while it
+processes several of these page sized data structures. For instance,
+while processing these pages the program might always access a page
+header, a B-tree key-pointer and a pointer collection at the end of
+the page. By recording the access pattern on a single page the pattern may
+be used on multiple pages each time the program accesses a new page
+with the same program counter and the same page offset.
+
+\subsubsection{How it works}
+SMS uses two different tables in its implementation. The Active
+Generation Table (AGT) which is used when recording spatial pattern,
+and the Page History Table (PHT) which stores recorded patterns. A
+generation is the time over which SMS records access to a spatial
+memory region. The spatial memory region is the collection of cache
+lines the SMS considers as a larger memory structure and it emulates
+the operating system memory page. The memory access that triggers a
+generation is referred to as a trigger access and it is the first
+access to memory region which is not currently being recorded in the
+AGT. The generation ends when one of the accessed cache lines that
+have been accessed during the generation is evicted from the cache.
+When a generation ends it is transferred from the AGT to the PHT if it
+has two or more accesses within the spatial region. In order to make
+the implementation easier the AGT is divided into two tables, the
+filter table and the accumulation table.  Upon a trigger access the
+generation is first inserted into the filter table, when the spatial
+region is accessed a second time, it is moved from the filter table to
+the accumulation table. All subsequent accesses updates the spatial
+pattern in the accumulation table.
+
+
+generation
+is triggered by the first access, or a trigger access to a spatial
+region.  It consist of a tag, which is the base memory address to the
+generation, the program counter and region offset which triggered the
+generation, and a bitset of the accessed cache lines in the region.
+AGT is further divided into the accumulation table, and the filter
+table to make the implementation easier. The filter table stores
+
+{\bf (references, citations)}
+Spatial Memory Streaming
+Stephen Somogyi, Thomas F. Wenisch,
+Anastassia Ailamaki, Babak Falsafi and Andreas Moshovos†
+http://www.eecg.toronto.edu/~moshovos/research/sms.pdf
