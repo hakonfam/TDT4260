@@ -14,11 +14,10 @@ Things to consider:
 \paragraph{Variability of Prefetcher Performance}
 \label{par:varprefperf}
 
-- How well do the different prefetchers perform on average?  The more
-complex ones perform better on average. Specifically, the GHB
+The more complex prefetchers perform better on average. Specifically, the GHB
 prefetcher has the highest performance. However, the difference is not
-very large except for a few exceptions. These exceptions are most
-likely occuring because the programs have a memory access pattern
+very large except for a few benchmarks. These exceptions are most
+likely occuring because the benchmark programs have a memory access pattern
 which corresponds well with the prefetcher which excells.
 
 %For instance, on the benchmark ammp the GHB prefetcher is able to
@@ -62,7 +61,9 @@ included is shown in \autoref{tab:ghbstridetab}.
 
 \paragraph{Uncertainties}
 \label{"waiting for reftex-label call..."}
+The four prefetchers discussed in this report varies widely in complexity. One factor that is not considered when using the simulation environment is the time required by the prefetchers to perform its calculations. 
 
+Another factor that is not taken into consideration is that the two address based prefetchers (stride and markov) would occupy less critical CPU surface, as it would not require having access to the program counter. The program counter based prefetchers would need to be implemented close enough to the CPU to have access to the program counter, or would need to have the program counter passed on to them. Both of theses solutions would affect the overall performance enhancement of the prefetchers. 
 - Considering how the time spent by our prefetching algorithms is not
 taken into account, are our results at all accurate and usable?
 
