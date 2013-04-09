@@ -1,4 +1,16 @@
 \subsection{Markov Prefetcher}
 \label{sec:markovPrefetcher}
-The Markov prefetcher is an address based prefetcher,...
+The markov prefetcher is an address based prefetcher. It remembers past sequences of memory misses, and applies statistics to these sequences to predict future memory accesses.
+
+It utilizes a graph with nodes representing cache blocks, and edges representing the propability that the connected node corresponds to the block being accessed next in the access sequence (see figure \ref{fig:markov}). The wheight of the edges is determined by how often the cache block corresponding to the node being connected by it is accessed directly after the current nodes cache block. For each memory access, the edge corresponding to this current transition needs to be updated. 
+
+When predicting the next sequence of addresses, the markov prefetcher follows the best path through the graph. Configuring the markov prefetcher would allow you to decide how many addresses it should prefetch, when to create a new edge between two nodes, when to delete an edge and when to delete a node.
+
+Looking at figure \ref{fig:markov}, if two addresses were to be prefetched, and \emph{0x0001} was the current node, then addresses \emph{0x0002} and \emph{0x0003} would be prefetched.
+
+\begin{figure}[H]
+\label{fig:markov}
+\includegraphics[scale=0.5]{./figures/markov}
+\caption{An illustration of the markov weighted graph}
+\end{figure}
 {\bf (references, citations)}
