@@ -1,11 +1,16 @@
 \paragraph{Combining Prefetchers}
 \label{par:prefcombo}
-Since the prefetchers have somewhat varying performance on the
-different programs, it might be a good idea to attempt to combine
-them. This could be done in two ways. One way would be to try and
-merge the two algorithms into a single prefetching algorithm. Another
-way would be to create a controlling unit utilizing heuristics to
-choose which of the two prefetchers should be used at a given time.
+Although the GHB prefetcher has the best performance on most
+applications, it is outperformed by the ABSP prefetcher on the galgel
+and apsi benchmarks. With a more varied workload and with other
+prefetcher algorithms, the diversity in efficiency might have been
+even greater. To try to get the best of all worlds, a natural line of
+thought would be to attempt to combine two or more of the
+prefetchers. This could be done in two ways. One way would be to try
+and merge the two algorithms into a single prefetching
+algorithm. Another way would be to create a controlling unit utilizing
+heuristics to choose which of the two prefetchers should be used at a
+given time.
 
 The first such strategy is especially applicable to the stride and GHB
 prefetchers. The GHB is in essence almost a stride prefetcher, since a

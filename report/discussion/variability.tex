@@ -10,11 +10,11 @@ From these results, there are a number of interesting observations one
 might make. The first item of interest relates to the average
 prefetcher speedups. As one might expect, it is the most complex,
 general purpose prefetcher, namely the GHB/PCDC prefetcher, which
-yields the highest average speedup. With an average speedup of $1.54$,
-it outperforms ABSP by $54.3\%$, SMS by $500\%$ and Markov by
+yields the highest average speedup. With an average speedup of
+$1.054$, it outperforms ABSP by $54.3\%$, SMS by $500\%$ and Markov by
 $some\%$. As it attempts to improve upon weaknesses in earlier methods
-as the stride directed and Markov prefetchers~\cite{Nesbit}, our
-results can be taken as an indication of its success. It therefore
+(such as the stride directed and Markov prefetchers~\cite{Nesbit}),
+our results can be taken as an indication of its success. It therefore
 shows that there may be merit in creating a prefetcher which handles
 nontrivial memory access patterns, which, although not particularly
 surprising, is nevertheless reassuring for the computer scientist
@@ -29,7 +29,7 @@ explained in \autoref{sec:smsPrefetcher}, the SMS prefethcer is
 designed to increase the performance of applications such as operating
 systems and databases. However, there are no such programs included in
 the SPEC CPU2000 suite, for which such I/O-intensive programs would
-not be suitable~\cite{SPECFAQ}. As the programs exhibits a lower
+not be suitable~\cite{SPECFAQ}. As the programs exhibit a lower
 degree of the memory access patterns the SMS prefetcher attempts to
 recognize, it will be unable to be of much use. As can be seen in
 \autoref{tab:numPrefetches}, the prefetcher is not completely
@@ -54,17 +54,42 @@ very beneficial.
 %achieve many times the speedup of the other prefetchers. This program
 %operates on the 
 
- Explanation of ammp: refer to GHB paper stating that this has the
- highest potential for speedup? Perhaps the paper also states the
- memory access pattern in ammp?
+%This point is a bit similar to our first paragraph, but is meant to
+%make concrete the point that it is the extra access pattern
+%recognition which makes it better whereas the first paragraph is
+%stated in more general terms of expectations. Are both necessary,
+%though?
+When studying the cause of the superior performance of the GHB
+prefetcher in further detail, it is evident that one benchmark in
+particular, namely ammp, makes this prefetcher pull ahead of the other
+algorithms. The geometric mean of the speedups when disregarding ammp
+is $1.045$, whereas the absp prefetcher, for instance, rises to
+$1.39$, reducing the difference in performance considerably.
 
+About ammp:
+- The one which drags avg of ghb up
+- Highest potential for speedup, cf \cite{Nesbit}.
+- Thoughts:
+  * Can be very beneficial to recognize more patterns, as it is in this case.
+  * Not so much for workloads were the pattern is not present or
+    prefetching does not have much impact on performance.
+  * A bit similar to SMS, but since it is more general it stands its ground. (?)
+
+%Explanation of ammp: refer to GHB paper stating that this has the
+%highest potential for speedup? Perhaps the paper also states the
+%memory access pattern in ammp?
+
+%Paragraph should perhaps be in uncertainties?
+An interesting remark is that even though the ABSP is a simplication
+of the prefetcher that GHB is an extension of, it has similar
+performance gains on several of the benchmark programs. Discuss
+whether this might make it an attractive alternative, given its
+relative simplicity? Or is this in uncertainties?
+
+%Paragraph should perhaps be in combining?
 One benchmark on which the GHB prefetcher was outperformed was the
 galgel benchmark, on which the stride prefetcher got an average
 speedup almost five times as high.
-
-An interesting remark is that even though the ABSP is a simplication
-of the prefetcher that GHB is an extension of, it has similar
-performance gains on several of the benchmark programs.
 
 
 %  - Are there any variance as to which programs they yield good speedup

@@ -16,7 +16,7 @@ figure~\ref{fig:stride}.
 
 The ABSP keeps track of the last accessed address, what the delta of the addresses in the current stride is, and
 also keeps track of for how long the current stride has been
-ongoing. Compared to the Stride Directory Prefetcher, ABSP only requires a costant amount of memory (only the last accessed address is saved). The fact that the ABSP is an strictly \emph{address based} prefetcher also means that the \emph{realization} would be simplified since it does not need to know the value of the Program Counter.
+ongoing. Compared to the Stride Directed Prefetcher, ABSP only requires a costant amount of memory (only the last accessed address is saved). The fact that the ABSP is an strictly \emph{address based} prefetcher also means that the \emph{realization} would be simplified since it does not need to know the value of the Program Counter.
 
 For each memory access, the memory address is compared to the last
 memory address. If the current stride value corresponds to the
@@ -24,7 +24,7 @@ difference, the number of current strides is updated. If the number of
 current strides is greater than or equal to the required/configured
 amunt of strides, a prefetched address is returned.  
 
-The prefetchers can be configured by changing two variables;
-the amount of strides that needs to be discovered before
+The prefetcher can be configured by changing two variables;
+the number of strides that need to occur in a row before
 the prefetcher will react on a memory access, and how many addresses it should prefetch once it is decided that it should prefetch.
 
