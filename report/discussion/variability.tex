@@ -13,30 +13,42 @@ general purpose prefetcher, namely the GHB/PCDC prefetcher, which
 yields the highest average speedup. With an average speedup of $1.54$,
 it outperforms ABSP by $54.3\%$, SMS by $500\%$ and Markov by
 $some\%$. As it attempts to improve upon weaknesses in earlier methods
-as the ABSP and Markov prefetchers~\cite{Nesbit}, this .,
+as the stride directed and Markov prefetchers~\cite{Nesbit}, our
+results can be taken as an indication of its success. It therefore
+shows that there may be merit in creating a prefetcher which handles
+nontrivial memory access patterns, which, although not particularly
+surprising, is nevertheless reassuring for the computer scientist
+community.% TODO: Remove GPP?
 
-our results show that it is successful in
-its quest. 
+A second point of interest is the relatively poor performance of the
+SMS prefetcher. Although it is arguably the most complex of all the
+prefetcher implementations, it yields an average speedup which is only
+$25\%$ of our simplest prefetcher, the ABSP. This is explainable by
+the nature of the benchmark programs we ran the prefetchers with. As
+explained in \autoref{sec:smsPrefetcher}, the SMS prefethcer is
+designed to increase the performance of applications such as operating
+systems and databases. However, there are no such programs included in
+the SPEC CPU2000 suite, for which such I/O-intensive programs would
+not be suitable~\cite{SPECFAQ}. As the programs exhibits a lower
+degree of the memory access patterns the SMS prefetcher attempts to
+recognize, it will be unable to be of much use. As can be seen in
+\autoref{tab:numPrefetches}, the prefetcher is not completely
+inactive, and is able to recognize some patterns. However, its
+activity level is in general lower than the other prefetchers'. Thus,
+using the SMS prefetcher in a domain it was not designed for is not
+very beneficial.
 
-  can be taken as a testament to its success.
-
-
- We can therethe potential of recognizing more exotic
-access patterns and integrating them into prefetch strategies which ,
-but still
-
-
-The more complex prefetchers perform better on average. Specifically,
-the GHB prefetcher has the highest performance. However, the
-difference is not very large except for a few benchmarks. These
-exceptions are most likely occuring because the benchmark programs
-have a memory access pattern which corresponds well with the
-prefetcher which excels.
-Blowup ideas:
-       - Define complex - LoC table. Also, SMS is most complex, but worst?
-       - GHB highest by how much? Specify the avg values, hard to read on the graph.
-       - Aren't the differences very large? Specify percentages to justify such a claim
-       - The last sentence needs clarification
+%The more complex prefetchers perform better on average. Specifically,
+%the GHB prefetcher has the highest performance. However, the
+%difference is not very large except for a few benchmarks. These
+%exceptions are most likely occuring because the benchmark programs
+%have a memory access pattern which corresponds well with the
+%prefetcher which excels.
+%Blowup ideas:
+%       - Define complex - LoC table. Also, SMS is most complex, but worst?
+%       - GHB highest by how much? Specify the avg values, hard to read on the graph.
+%n       - Aren't the differences very large? Specify percentages to justify such a claim
+%       - The last sentence needs clarification
 
 %For instance, on the benchmark ammp the GHB prefetcher is able to
 %achieve many times the speedup of the other prefetchers. This program
@@ -54,8 +66,6 @@ An interesting remark is that even though the ABSP is a simplication
 of the prefetcher that GHB is an extension of, it has similar
 performance gains on several of the benchmark programs.
 
-SMS Prefetcher is not performing too well on our benchmark
-programs. This is natural.
 
 %  - Are there any variance as to which programs they yield good speedup
 %  on?  

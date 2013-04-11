@@ -9,7 +9,9 @@
 \label{sec:result}
 
 The speedup from when running the selected applications with the
-different prefetchers is tabulated in \autoref{fig:initResults}.
+different prefetchers is tabulated in \autoref{fig:initResults}. The
+number of prefetches issued by each algorithm is shown in
+\autoref{tab:numPrefetches}.
 % These speedups are calculated from stats from m5... Don't need this
 % here, have already written this in methodology/intro - right?
 
@@ -19,6 +21,29 @@ different prefetchers is tabulated in \autoref{fig:initResults}.
   \caption{\label{fig:initResults} Speedup on the Y-axis plotted
     against program on the X-axis.}
 \end{figure}
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \textbf{Program} & \textbf{ABSP} & \textbf{GHB/PCDC} & \textbf{SMS} & \textbf{Markov} \\ \hline
+    ammp             & 7             & 11133102          & 2629         &  \\ \hline
+    applu            & 181817        & 1031986           & 63999        &  \\ \hline
+    apsi             & 52894         & 60416             & 879          &  \\ \hline
+    art110           & 1205703       & 2987084           & 325551       &  \\ \hline
+    art470           & 1205703       & 2987084           & 325551       &  \\ \hline
+    bzip2\_graphic   & 52339         & 64649             & 45194        &  \\ \hline
+    bzip2\_program   & 16802         & 31978             & 19994        &  \\ \hline
+    bzip2\_source    & 16124         & 22196             & 10391        &  \\ \hline
+    galgel           & 171849        & 434138            & 37906        &  \\ \hline
+    swim             & 10263         & 1487464           & 287655       &  \\ \hline
+    twolf            & 41            & 54773             & 115217       &  \\ \hline
+    wupwise          & 308489        & 332550            & 61077        &  \\ \hline
+  \end{tabular}
+  \caption{The number of memory addresses prefetched on each benchmark by each prefetcher.}
+  \label{tab:numPrefetches}
+\end{table}
+
 
 Detailed data of the results from the optimal parameter search as
 described in \autoref{sec:methodology} is not included, being just an
