@@ -9,7 +9,7 @@ thought would be to attempt to combine two or more of the
 prefetchers. This could be done in two ways. One way would be to try
 and merge the two algorithms into a single prefetching
 algorithm. Another way would be to create a controlling unit utilizing
-heuristics to choose which of the two prefetchers should be used at a
+heuristics to choose which of the prefetchers should be used at a
 given time.
 
 The first such strategy is especially applicable to the stride and GHB
@@ -21,5 +21,15 @@ matching, only two addresses will be prefetched. According to
 would be optimal. Therefore, one could try to recognize this special
 case by checking when the final four elements of the delta table are
 identical, and prefetch a larger set of blocks the constant stride
-apart. The results from running the GHB prefetcher with this change
-included is shown in \autoref{tab:ghbstridetab}.
+apart.
+
+When running the GHB prefetcher with this change included, the optimal
+configuration is a table size of $350$ entries and a prefetch degree
+of $5$. With this configuration, the average speedup is $1.058$. The
+performance on apsi is increased to $1.051$, surpassing the ABSP
+prefetcher. On the galgel benchmark, the performance is increased to
+$1.029$ up from $1.016$. This is a bit closer to the performance of
+the ABSP prefetcher, which has a speedup of $1.058$, but is still not
+quite as good. We were as such unable to easily extend the GHB
+prefetcher to provide as good performance as the ABSP prefetcher in
+its dominant area.
