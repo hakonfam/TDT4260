@@ -42,16 +42,19 @@ filter table and the accumulation table.  Upon a trigger access the
 generation is first inserted into the filter table, when the spatial
 region is accessed a second time, it is moved from the filter table to
 the accumulation table. All subsequent accesses updates the spatial
-pattern in the accumulation table.
+pattern in the accumulation table.  An entry in the AGT consist of a
+tag, which is the base address of the spatial region, the program
+counter and the offset that triggered the generation and a bit pattern
+of the cache lines which has been accessed during the generation.
+[figure here??]
 
-
-generation
-is triggered by the first access, or a trigger access to a spatial
-region.  It consist of a tag, which is the base memory address to the
-generation, the program counter and region offset which triggered the
-generation, and a bitset of the accessed cache lines in the region.
-AGT is further divided into the accumulation table, and the filter
-table to make the implementation easier. The filter table stores
+Upon a trigger access, the PHT is searched for a recorded pattern that
+can be used.  The PHT has a tag which is the program counter and
+region offset of the trigger access to the generation, and the recorded spatial
+pattern. When looking up in the PHT the current program counter and
+memory offset is compared to the tag. If it is a match SMS starts to
+stream a set of addresses which is the constructed from the spatial
+pattern in the PHT and the current memory region access.
 
 {\bf (references, citations)}
 Spatial Memory Streaming
