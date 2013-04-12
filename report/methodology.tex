@@ -66,13 +66,12 @@ was to set them initially to more or less arbitrary values within the
 permissible range, and attempt to locate at least a local maximum by
 varying the parameters in turn. Due to the enormous possible set of
 values, only a few were tried for each degree of freedom---these are
-listed in \autoref{tab:stridesettings}, \autoref{tab:ghbsettings},
-\autoref{tab:smssettings} and \autoref{tab:markovsettings}. The
+listed in \autoref{tab:stridesettings}, \autoref{tab:ghbsettings} and
+\autoref{tab:smssettings}. The
 combination of parameters which yielded the highest average speedup
 are marked in bold.
 
 \begin{table}[htbp]
-  \caption{The various parameters attempted for the ABSP. The prefetch degree is the number of consecutive blocks prefetched, the consecutive strides is how many consecutive constant step memory misses must occur before a prefetch is issued.}
   \centering
   \begin{tabular}{|c|c|c|}
     \hline
@@ -81,11 +80,11 @@ are marked in bold.
     \textbf{15} & \textbf{4} \\ \hline
     15 & 5 \\ \hline % TODO: Not all these settings have been attempted yet...
   \end{tabular}
+  \caption{The various parameters attempted for the ABSP. The prefetch degree is the number of consecutive blocks prefetched, the consecutive strides is how many consecutive constant step memory misses must occur before a prefetch is issued.}
   \label{tab:stridesettings}
 \end{table}
 
 \begin{table}[htbp]
-  \caption{The various parameters attempted for the GHB/PCDC prefetcher. The table size is the number of entries in both the GHB and the index table---unequal sizes were not tested. The prefetch degree is the number of blocks to issue prefetches for, once you find a previous history match.}
   \centering
   \begin{tabular}{|c|c|c|}
     \hline
@@ -95,11 +94,11 @@ are marked in bold.
     400 & \textbf{10} \\ \hline
         & 15 \\ \hline
   \end{tabular}
+  \caption{The various parameters attempted for the GHB/PCDC prefetcher. The table size is the number of entries in both the GHB and the index table---unequal sizes were not tested. The prefetch degree is the number of blocks to issue prefetches for, once you find a previous history match.}
   \label{tab:ghbsettings}
 \end{table}
 
 \begin{table}[htbp]
-  \caption{\emph{}}
   \centering
   \begin{tabular}{|c|c|c|c|c|}
     \hline
@@ -108,6 +107,7 @@ are marked in bold.
     8  & \textbf{256} & 32&  \textbf{32}\\ \hline
     \textbf{11} &     & \textbf{64}&  64\\ \hline
   \end{tabular}
+  \caption{The various parameters attempted for the SMS prefetcher.}
   \label{tab:smssettings}
 \end{table}
 
