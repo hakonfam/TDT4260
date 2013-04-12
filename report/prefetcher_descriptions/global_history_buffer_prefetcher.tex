@@ -4,12 +4,11 @@
 The global history buffer prefetcher is an instruction based
 prefetching scheme, i.e. a prefetcher which uses the value of the
 program counter at the memory access time to gather statistics about,
-and from these predict, future memory accesses for the given load. In
-this scheme, a datastructure called Global History Buffer (abbreviated
-GHB) is maintained. This datastructure is a table whose elements are
+and from these predict, future memory accesses. In
+this scheme, a datastructure called Global History Buffer (GHB) is maintained. This datastructure is a table whose elements are
 addresses for which a cache miss has recently occurred, as well as a
-pointer to the previous table element representing a miss
-corresponding to the same program counter as the given miss. The
+pointer to the previous entry representing a miss
+with the same program counter as the given miss. The
 structure is illustrated in figure~\ref{fig:ghbStruct}.
 
 \begin{figure}[ht]
@@ -44,19 +43,19 @@ figure~\ref{fig:deltaTableComp}.
 \end{figure}
 
 The delta table is then searched backwards for the previous occurrence
-of the last two delta values. In our example in
-figure~\ref{fig:deltaTableComp}, we would search for the delta values
-238 and --156. If these have not occurred previously, as they indeed
-have not in our example, then we do not prefetch anything as we have
-no information about the past. If they are found, however, we prefetch
+of the last two delta values. In the example in
+figure~\ref{fig:deltaTableComp}, GHB searches for the delta values
+--156 and --238. If these have not occurred previously, as they indeed
+have not in this example, then GHB do not prefetch anything as it has
+no information about the past. If they are found, however, GHB would prefetch
 addresses according to the deltas which followed the previous delta
 pair occurrence. 
 
 An example of where this technique would improve upon the stride
-prefetcher follows, as given in \cite{Nesbit}. Assume you access the
+prefetcher follows, as given in \cite{Nesbit}. Assume the program accesses the
 first few columns of each row of a multidimensional array. This would
 result in a few constant stride misses, followed by a miss with a
-delta corresponding to the size of the remaining row. A stride
+delta corresponding to the size of the remaining row. A stride directed
 prefetcher would issue prefetches for the constant stride, which would
 be unneeded when you start accessing the next row.
 % Furthermore, if the number of columns accessed was small the stride
@@ -70,7 +69,6 @@ misses. It could then start prefetching sensible addresses right away.
 
 Another example would be code which traverses the same linked data
 structure multiple times. Consider the following loop:
-
 \begin{lstlisting}
   void f(list *l) {
     for (list *n = l; n; n = n->next) {
@@ -78,7 +76,6 @@ structure multiple times. Consider the following loop:
     }
   }
 \end{lstlisting}
-
 In particular, consider the end-of-loop statement {\lstinline|n =  n->next|}. 
 Assuming a register {\lstinline|r1|} contained {\lstinline|n|}, this
 would compile into something like the following:
@@ -97,4 +94,3 @@ list then on future calls the first iterations should register the
 start of the loop, and prefetch the addresses belonging to elements
 further on in the list.
 
-{\bf (references, citations)}

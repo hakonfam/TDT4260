@@ -2,11 +2,10 @@
 \label{sec:smsPrefetcher}
 
 The Spatial Memory Streaming (SMS) Prefetcher is a spatial locality
-prefetcher which ideas was first presented in \cite{SMS}, it tries to
-exloit the relationship between a memory page, and a cache line.
+prefetcher. It tries to exloit the relationship between a memory page, and a cache block. It was first presented in \cite{SMS}.
 
-Since a memory page is larger than a cache line, the memory page is
-fragmented across several cache lines, and even though the page is in
+Since a memory page is larger than a cache block, the memory page is
+fragmented across several cache blocks, and even though the page is in
 memory, only parts of it may be in the cache.  When designing
 operating systems and database management systems, the system designer
 will optimize the design for the memory page size in order to limit
@@ -30,20 +29,20 @@ with the same program counter and the same page offset.
   \label{fig:sms_pattern}
 \end{figure}
 
-Figure \ref{fig:sms_pattern} shows the opportunities that SMS tries to exploit, here pages 1 and 2 have exactly the same access pattern. Page 4 has a similar entry point but differs from 1 and 2 in that it has one more cache block. Altought Page 3 has some similar blocks it differs in entry. SMS will exploit the pattern that was recorded on page 1 to prefetch the blocks in Page 2 and 4.
+Figure \ref{fig:sms_pattern} shows the access sequence patterns that SMS tries to exploit. Here pages 1 and 2 have exactly the same access pattern. Page 4 has a similar entry point but differs from 1 and 2 in that it accesses one more cache block. Altough Page 3 has some similar blocks it differs in entry. SMS will exploit the pattern that was recorded on page 1 to prefetch the blocks in Page 2 and 4.
+\newline
 
-\subsubsection{How it works}
 SMS uses two different tables in its implementation. The Active
 Generation Table (AGT) which is used when recording spatial pattern,
 and the Page History Table (PHT) which stores recorded patterns. 
 
 A generation is the time over which SMS records access to a spatial
 memory region. The spatial memory region is the collection of cache
-lines the SMS considers as a larger memory structure and it emulates
+blocks the SMS considers as a larger memory structure and it emulates
 the operating system memory page. The memory access that triggers a
 generation is referred to as a trigger access and it is the first
 access to memory region which is not currently being recorded in the
-AGT. The generation ends when one of the accessed cache lines that
+AGT. The generation ends when one of the accessed cache blocks that
 have been accessed during the generation is invalidated or evicted
 from the cache.  When a generation ends it is transferred from the AGT
 to the PHT if it has two or more accesses within the spatial
@@ -55,7 +54,7 @@ the filter table to the accumulation table. All subsequent accesses
 updates the spatial pattern in the accumulation table.  An entry in
 the AGT consist of a tag, which is the base address of the spatial
 region, the program counter and the offset that triggered the
-generation and a spatial bit pattern of the cache lines which has been
+generation and a spatial bit pattern representing the cache blocks which has been
 accessed during the generation. 
 
 \begin{table}[htbp]

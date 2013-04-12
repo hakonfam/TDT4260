@@ -8,12 +8,9 @@ simulation environment the compute time used by the prefetchers is not
 reported or taken into consideration when calculating the resulting
 speedups. As such, complex prefetchers will not be punished for their
 higher computational demands, and one has to keep this in mind when
-considering our results.
+considering the results.
 
-It is important however, not to use the current software
-implementation of the prefetchers to draw any conclusions about the
-impact of these issues in the hardware implementions of these
-prefetchers.
+One can not use these results to draw conclusions as to which of these prefetchers would yield the highest performance gain when being implemented in hardware. The reason for this being that the characteristics of a software prototype not necessarily corresponds to those of a hardware implementation of the same functionality.
 
 As always with software, there is the possibility that the code
 contains logical errors. These potential errors could have noticable

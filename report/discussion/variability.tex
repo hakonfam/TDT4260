@@ -6,8 +6,7 @@
 
 
 %Should the data in here be in result instead? Percentages etc.
-From these results, there are a number of interesting observations one
-might make. The first item of interest relates to the average
+From these results, there are a number of interesting observations. The first item of interest relates to the average
 prefetcher speedups. As one might expect, it is the most complex,
 general purpose prefetcher, namely the GHB/PCDC prefetcher, which
 yields the highest average speedup. With an average speedup of
@@ -21,15 +20,13 @@ surprising, is nevertheless reassuring for the computer scientist
 community.% TODO: Remove GPP?
 
 A second point of interest is the relatively poor performance of the
-SMS prefetcher. Although it is arguably the most complex of all the
+SMS prefetcher. Although it is one of the more complex of the four
 prefetcher implementations, it yields an average speedup which is only
 $25\%$ of our simplest prefetcher, the ABSP. This is explainable by
 the nature of the benchmark programs we ran the prefetchers with. As
 explained in \autoref{sec:smsPrefetcher}, the SMS prefethcer is
 designed to increase the performance of applications such as operating
-systems and databases. However, there are no such programs included in
-the SPEC CPU2000 suite, for which such I/O-intensive programs would
-not be suitable~\cite{SPECFAQ}. As the programs exhibit a lower degree
+systems and databases. However in the SPEC CPU2000 suite, there are no applications which has a memory pattern of high spatial locality~\cite{SPECFAQ}. As the programs exhibit a lower degree
 of the memory access patterns the SMS prefetcher attempts to
 recognize, it will be unable to be of much use. As can be seen in
 \autoref{tab:numPrefetches}, the prefetcher is not completely
@@ -51,10 +48,10 @@ considerably. According to table 2 in \cite{Nesbit}, \emph{ammp} is the
 application which has the greatest potential for speedup from
 prefetching data, with the possibility of $815\%$ improvement in
 execution time. Thus, being able to leverage this potential gives a
-significant competitive edge. This also shows that using a prefetcher that can match several access patterns will have a larger chance of matching the access patterns of the applications, and that this can be very significant for the average performance of the prefetcher. In contrast to the SMS prefetcher, the performance is still good even when disregarding the best input case. This is a consequence of its generic nature, attempting to match both normal and more rare access patterns.   
+significant competitive edge. This also shows that using a prefetcher that can match several access patterns will have a larger chance of matching the access patterns of the applications, and that this can be significant for the average performance of the prefetcher. In contrast to the SMS prefetcher, the performance is still good even when disregarding the best input case. This is a consequence of its generic nature, attempting to match both normal and more rare access patterns.   
 
 An interesting remark is that even though the ABSP is a simplication
 of the prefetcher that GHB is an extension of, it has similar
 performance gains on several of the benchmark programs. As previously notet, when disregarding the \emph{ammp} benchmark, its results is only $13.6\%$ worse than that of GHB. Considering the relative simplicity and low memory requirements of the ABSP prefetcher this difference might be too small to justify the choice of a prefetcher as complex as the GHB. This shows the value of investigating the context in which the prefetcher will be used.  
 
-To be specific, one factor that is not taken into consideration is that the ABSP and markov prefetcher most likely would occupy less critical CPU surface, as they would not require having access to the program counter. The program counter based prefetchers would need to be implemented close enough to the CPU to have access to the program counter, or would need to have the program counter passed on to them. Both of these solutions are likely to have a negative impact on the performance enhancement of the prefetchers. 
+To be specific, one factor that is not taken into consideration is that the ABSP and markov prefetcher most likely would occupy less critical CPU surface, as they would not require having access to the program counter. The two prefetchers relying on the program counter (SMS and GHB) would need to be implemented close enough to the CPU to have access to the program counter, or would need to have the program counter passed on to them. Both of these solutions are likely to have a negative impact on the performance of the prefetchers. 
