@@ -29,14 +29,17 @@ explained in \autoref{sec:smsPrefetcher}, the SMS prefethcer is
 designed to increase the performance of applications such as operating
 systems and databases. However, there are no such programs included in
 the SPEC CPU2000 suite, for which such I/O-intensive programs would
-not be suitable~\cite{SPECFAQ}. As the programs exhibit a lower
-degree of the memory access patterns the SMS prefetcher attempts to
+not be suitable~\cite{SPECFAQ}. As the programs exhibit a lower degree
+of the memory access patterns the SMS prefetcher attempts to
 recognize, it will be unable to be of much use. As can be seen in
 \autoref{tab:numPrefetches}, the prefetcher is not completely
 inactive, and is able to recognize some patterns. However, its
 activity level is in general lower than the other prefetchers'. Thus,
 using the SMS prefetcher in a domain it was not designed for is not
-very beneficial.
+very beneficial. In addition, according to~\cite{SMS} the optimal
+configuration has a memory usage requirement on the order of hundreds
+of kilobytes, which was outside our parameter search space. This could
+also account for some of the poor performance.
 
 %The more complex prefetchers perform better on average. Specifically,
 %the GHB prefetcher has the highest performance. However, the
@@ -64,7 +67,15 @@ prefetcher in further detail, it is evident that one benchmark in
 particular, namely ammp, makes this prefetcher pull ahead of the other
 algorithms. The geometric mean of the speedups when disregarding ammp
 is $1.045$, whereas the absp prefetcher, for instance, rises to
-$1.39$, reducing the difference in performance considerably.
+$1.039$, reducing the difference in performance
+considerably. According to table 2 in \cite{Nesbit}, ammp is the
+application which has the greatest potential for speedup from
+prefetching data, with the possibility of $815\%$ improvement in
+execution time. Thus, being able to leverage this potential gives a
+significant competitive edge. However, for a workload which does not
+include programs which both has a large degree of such memory access
+patterns and where prefetching makes a large difference on application
+performance, the 
 
 About ammp:
 - The one which drags avg of ghb up

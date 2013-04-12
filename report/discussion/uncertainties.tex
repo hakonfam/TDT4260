@@ -1,11 +1,7 @@
 \paragraph{Uncertainties}
 \label{"waiting for reftex-label call..."}
-The four prefetchers discussed in this report varies widely in complexity. One factor that is not considered when using the simulation environment is the time required by the prefetchers to perform its calculations. 
+The four prefetchers discussed in this report varies widely in complexity. One factor that is not considered when using the simulation environment is the time required by the prefetchers to perform its calculations. When performing tests using the M5 simulation environment the compute time used by the prefetchers is not reported or taken into consideration when calculating the resulting speedups. As such, complex prefetchers will not be punished for their higher computational demands, and one has to keep this in mind when considering our results. 
 
-- Considering how the time spent by our prefetching algorithms is not
-taken into account, are our results at all accurate and usable?
+It is important however, not to use the current software implementation of the prefetchers to draw any conclusions about the impact of these issues in the hardware implementions of these prefetchers. 
 
-- Are our implementations perhaps not correct?
-- Simulation environment misunderstandings?
-
-- Anything else?
+As always with software, there is the possibility that the code contains logical errors. These potential errors could have noticable implications on the results of the prefethers.
