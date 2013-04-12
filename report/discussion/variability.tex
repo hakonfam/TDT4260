@@ -86,6 +86,9 @@ performance gains on several of the benchmark programs. Discuss
 whether this might make it an attractive alternative, given its
 relative simplicity? Or is this in uncertainties?
 
+Another factor that is not taken into consideration is that the two address based prefetchers (ABSP and markov) would occupy less critical CPU surface, as it would not require having access to the program counter. The program counter based prefetchers would need to be implemented close enough to the CPU to have access to the program counter, or would need to have the program counter passed on to them. Both of theses solutions would affect the overall performance enhancement of the prefetchers. 
+
+
 %Paragraph should perhaps be in combining?
 One benchmark on which the GHB prefetcher was outperformed was the
 galgel benchmark, on which the stride prefetcher got an average
