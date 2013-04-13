@@ -6,12 +6,13 @@
 
 
 %Should the data in here be in result instead? Percentages etc.
-From these results, there are a number of interesting observations. The first item of interest relates to the average
+From these results, there are a number of interesting
+observations. The first item of interest relates to the average
 prefetcher speedups. As one might expect, it is the most complex,
 general purpose prefetcher, namely the GHB/PCDC prefetcher, which
 yields the highest average speedup. With an average speedup of
 $1.054$, it outperforms ABSP by $54.3\%$, SMS by $500\%$ and Markov by
-$some\%$. As it attempts to improve upon weaknesses in earlier methods
+$1700\%$. As it attempts to improve upon weaknesses in earlier methods
 (such as the stride directed and Markov prefetchers~\cite{Nesbit}),
 our results can be taken as an indication of its success. It therefore
 shows that there may be merit in creating a prefetcher which handles
@@ -26,9 +27,12 @@ $25\%$ of our simplest prefetcher, the ABSP. This is explainable by
 the nature of the benchmark programs we ran the prefetchers with. As
 explained in \autoref{sec:smsPrefetcher}, the SMS prefethcer is
 designed to increase the performance of applications such as operating
-systems and databases. However in the SPEC CPU2000 suite, there are no applications which has a memory pattern of high spatial locality~\cite{SPECFAQ}. As the programs exhibit a lower degree
-of the memory access patterns the SMS prefetcher attempts to
-recognize, it will be unable to be of much use. As can be seen in
+systems and databases. However in the SPEC CPU2000 suite, there are no
+I/O intensive applications~\cite{SPECFAQ}, which are more likely to
+have been tuned to have high spatial locality on disk block
+granularity. As the programs exhibit a lower degree of the memory
+access patterns the SMS prefetcher attempts to recognize, it will be
+unable to be of much use. As can be seen in
 \autoref{tab:numPrefetches}, the prefetcher is not completely
 inactive, and is able to recognize some patterns. However, its
 activity level is in general lower than the other prefetchers'. Thus,
@@ -38,22 +42,56 @@ configuration has a memory usage requirement on the order of hundreds
 of kilobytes, which was outside our parameter search space. This could
 also account for some of the poor performance.
 
+The Markov prefetcher also performed poorly on average. One of the
+reasons for this is that it has a very high memory requirement (on the
+order of megabytes, according to \cite{Nesbit}). When being restricted
+by a maximum of 8KiB the Markov prefetcher is unable to contain a
+large enough graph to be able to perform accurate predictions. Since
+the Markov prefetcher only is able to prefetch addresses which it has
+already seen, it is unable to yield a high speedup for applications
+with a low rate of repeting memory addresses.
+
+It is interesting to note, however, that the Markov prefetcher is the
+one with the highest speedup on any single benchmark. Although it has
+the worst performance on ten out of twelve benchmarks, it apparently
+is the best match for the memory access behavior of \emph{ammp}. If a
+workload consisted only of this kind of workload, then the Markov
+prefetcher would arguably be a valid choice.
+
 When studying the cause of the superior performance of the GHB
 prefetcher in further detail, it is evident that one benchmark in
-particular, namely \emph{ammp}, makes this prefetcher pull ahead of the other
-algorithms. The geometric mean of the speedups when disregarding \emph{ammp}
-is $1.045$, whereas the ABSP prefetcher, for instance, rises to
-$1.039$, reducing the difference in performance
-considerably. According to table 2 in \cite{Nesbit}, \emph{ammp} is the
-application which has the greatest potential for speedup from
+particular, namely \emph{ammp}, makes this prefetcher pull ahead of
+the other algorithms. The harmonic mean of the speedups when
+disregarding \emph{ammp} is $1.045$, whereas the ABSP prefetcher, for
+instance, rises to $1.038$, reducing the difference in performance
+considerably. According to table 2 in \cite{Nesbit}, \emph{ammp} is
+the application which has the greatest potential for speedup from
 prefetching data, with the possibility of $815\%$ improvement in
 execution time. Thus, being able to leverage this potential gives a
-significant competitive edge. This also shows that using a prefetcher that can match several access patterns will have a larger chance of matching the access patterns of the applications, and that this can be significant for the average performance of the prefetcher. In contrast to the SMS prefetcher, the performance is still good even when disregarding the best input case. This is a consequence of its generic nature, attempting to match both normal and more rare access patterns.   
+significant competitive edge. This also shows that using a prefetcher
+that can match several access patterns will have a larger chance of
+matching the access patterns of the applications, and that this can be
+significant for the average performance of the prefetcher. In contrast
+to the SMS prefetcher, the performance is still good even when
+disregarding the best input case. This is a consequence of its generic
+nature, attempting to match both normal and more rare access patterns.
 
 An interesting remark is that even though the ABSP is a simplication
 of the prefetcher that GHB is an extension of, it has similar
-performance gains on several of the benchmark programs. As previously notet, when disregarding the \emph{ammp} benchmark, its results is only $13.6\%$ worse than that of GHB. Considering the relative simplicity and low memory requirements of the ABSP prefetcher this difference might be too small to justify the choice of a prefetcher as complex as the GHB. This shows the value of investigating the context in which the prefetcher will be used.  
+performance gains on several of the benchmark programs. As previously
+noted, when disregarding the \emph{ammp} benchmark, its results is
+only $13.6\%$ worse than that of GHB. Considering the relative
+simplicity and low memory requirements of the ABSP prefetcher this
+difference might be too small to justify the choice of a prefetcher as
+complex as the GHB. This shows the value of investigating the context
+in which the prefetcher will be used.
 
-The markov prefetcher also performed poorly on average. One of the reasons for this is that it has a very high memory requirement. When being restricted by a maximum of 8KiB the markov prefetcher is unable to contain a large enough graph to be able to perform accurate predictions. Since the markov prefetcher only is able to prefetch addresses which it has already seen, it is unable to yield a high speedup for applications with a low rate of repeting memory addresses.
+To be specific, one factor that is not taken into consideration is
+that the ABSP and Markov prefetcher most likely would occupy less
+critical CPU surface, as they would not require having access to the
+program counter. The two prefetchers relying on the program counter
+(SMS and GHB) would need to be implemented close enough to the CPU to
+have access to the program counter, or would need to have the program
+counter passed on to them. Both of these solutions are likely to have
+a negative impact on the performance of the prefetchers.
 
-To be specific, one factor that is not taken into consideration is that the ABSP and markov prefetcher most likely would occupy less critical CPU surface, as they would not require having access to the program counter. The two prefetchers relying on the program counter (SMS and GHB) would need to be implemented close enough to the CPU to have access to the program counter, or would need to have the program counter passed on to them. Both of these solutions are likely to have a negative impact on the performance of the prefetchers. 

@@ -66,7 +66,7 @@ permissible range, and attempt to locate at least a local maximum by
 varying the parameters in turn. Due to the enormous possible set of
 values, only a few were tried for each degree of freedom---these are
 listed in \autoref{tab:stridesettings}, \autoref{tab:ghbsettings},
-\autoref{tab:smssettings}. The
+\autoref{tab:smssettings} and \autoref{tab:markovsettings}. The
 combination of parameters which yielded the highest average speedup
 are marked in bold.
 
@@ -85,7 +85,7 @@ are marked in bold.
 
 \begin{table}[htbp]
   \centering
-  \begin{tabular}{|c|c|c|}
+  \begin{tabular}{|c|c|}
     \hline
     \textbf{Table Size} & \textbf{Prefetch Degree} \\ \hline
     300 & 3 \\ \hline
@@ -110,6 +110,18 @@ are marked in bold.
   \label{tab:smssettings}
 \end{table}
 
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Table Size} & \textbf{Prefetch Degree} \\ \hline
+    2000 & 2 \\ \hline
+    4000 & 3 \\ \hline
+    \textbf{6000} & \textbf{4} \\ \hline
+  \end{tabular}
+  \caption{The various parameters attempted for the Markov prefetcher. The table size is the maximum number of nodes in the Markov chain, and the prefetch degree is the number of edges to follow when prefetching.}
+  \label{tab:markovsettings}
+\end{table}
 
 
 % \begin{table}[htbp]

@@ -20,7 +20,7 @@ prefetches issued by each algorithm is shown in
   \includegraphics[scale=0.25]{figures/init_results.png}
   \caption{\label{fig:initResults} Speedup on the Y-axis plotted
     against program on the X-axis. The average values are calculated
-    with a geometric mean.}
+    with a harmonic mean.}
 \end{figure}
 
 \begin{table}[htbp]
@@ -28,18 +28,18 @@ prefetches issued by each algorithm is shown in
   \begin{tabular}{|c|c|c|c|c|}
     \hline
     \textbf{Program} & \textbf{ABSP} & \textbf{GHB/PCDC} & \textbf{SMS} & \textbf{Markov} \\ \hline
-    ammp             & 7             & 11133102          & 2629         &  \\ \hline
-    applu            & 181817        & 1031986           & 63999        &  \\ \hline
-    apsi             & 52894         & 60416             & 879          &  \\ \hline
-    art110           & 1205703       & 2987084           & 325551       &  \\ \hline
-    art470           & 1205703       & 2987084           & 325551       &  \\ \hline
-    bzip2\_graphic   & 52339         & 64649             & 45194        &  \\ \hline
-    bzip2\_program   & 16802         & 31978             & 19994        &  \\ \hline
-    bzip2\_source    & 16124         & 22196             & 10391        &  \\ \hline
-    galgel           & 171849        & 434138            & 37906        &  \\ \hline
-    swim             & 10263         & 1487464           & 287655       &  \\ \hline
-    twolf            & 41            & 54773             & 115217       &  \\ \hline
-    wupwise          & 308489        & 332550            & 61077        &  \\ \hline
+    ammp             & 7             & 11133102          & 2629         & 7359044 \\ \hline
+    applu            & 181817        & 1031986           & 63999        & 214880 \\ \hline
+    apsi             & 52894         & 60416             & 879          & 7473 \\ \hline
+    art110           & 1205703       & 2987084           & 325551       & 1623008 \\ \hline
+    art470           & 1205703       & 2987084           & 325551       & 1623008 \\ \hline
+    bzip2\_graphic   & 52339         & 64649             & 45194        & 697 \\ \hline
+    bzip2\_program   & 16802         & 31978             & 19994        & 935 \\ \hline
+    bzip2\_source    & 16124         & 22196             & 10391        & 503 \\ \hline
+    galgel           & 171849        & 434138            & 37906        & 21337 \\ \hline
+    swim             & 10263         & 1487464           & 287655       & 101607 \\ \hline
+    twolf            & 41            & 54773             & 115217       & 236883 \\ \hline
+    wupwise          & 308489        & 332550            & 61077        & 43555 \\ \hline
   \end{tabular}
   \caption{The number of memory addresses prefetched on each benchmark by each prefetcher.}
   \label{tab:numPrefetches}
