@@ -12,7 +12,7 @@ prefetcher speedups. As one might expect, it is the most complex,
 general purpose prefetcher, namely the GHB/PCDC prefetcher, which
 yields the highest average speedup. With an average speedup of
 $1.054$, it outperforms ABSP by $54.3\%$, SMS by $500\%$ and Markov by
-$1700\%$. As it attempts to improve upon weaknesses in earlier methods
+$237.5\%$. As it attempts to improve upon weaknesses in earlier methods
 (such as the stride directed and Markov prefetchers~\cite{Nesbit}),
 our results can be taken as an indication of its success. It therefore
 shows that there may be merit in creating a prefetcher which handles
@@ -35,12 +35,13 @@ access patterns the SMS prefetcher attempts to recognize, it will be
 unable to be of much use. As can be seen in
 \autoref{tab:numPrefetches}, the prefetcher is not completely
 inactive, and is able to recognize some patterns. However, its
-activity level is in general lower than the other prefetchers'. Thus,
-using the SMS prefetcher in a domain it was not designed for is not
-very beneficial. In addition, according to~\cite{SMS} the optimal
-configuration has a memory usage requirement on the order of hundreds
-of kilobytes, which was outside our parameter search space. This could
-also account for some of the poor performance.
+activity level is in general lower than the better performing
+prefetchers'. Thus, using the SMS prefetcher in a domain it was not
+designed for is not very beneficial. In addition, according
+to~\cite{SMS} the optimal configuration has a memory usage requirement
+on the order of hundreds of kilobytes, which was outside our parameter
+search space. This could also account for some of the poor
+performance.
 
 The Markov prefetcher also performed poorly on average. One of the
 reasons for this is that it has a very high memory requirement (on the
@@ -53,7 +54,7 @@ with a low rate of repeating memory addresses.
 
 It is interesting to note, however, that the Markov prefetcher is the
 one with the highest speedup on any single benchmark. Although it has
-the worst performance on ten out of twelve benchmarks, it apparently
+the worst performance on eight out of twelve benchmarks, it apparently
 is the best match for the memory access behavior of \emph{ammp}. If a
 workload consisted only of this kind of workload, then the Markov
 prefetcher would arguably be a valid choice.
