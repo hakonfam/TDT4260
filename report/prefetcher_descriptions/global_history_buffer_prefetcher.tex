@@ -5,7 +5,7 @@ The global history buffer prefetcher is an instruction based
 prefetching scheme, i.e. a prefetcher which uses the value of the
 program counter at the memory access time to gather statistics about,
 and from these predict, future memory accesses. In
-this scheme, a datastructure called Global History Buffer (GHB) is maintained. This datastructure is a table whose elements are
+this scheme, a data structure called Global History Buffer (GHB) is maintained. This data structure is a table whose elements are
 addresses for which a cache miss has recently occurred, as well as a
 pointer to the previous entry representing a miss
 with the same program counter as the given miss. The
@@ -22,7 +22,7 @@ structure is illustrated in figure~\ref{fig:ghbStruct}.
 
 Complementary to this table, an index table is used to record the last
 entry inserted into the GHB for a given program counter value. With
-these two datastructures, you can obtain the recent miss history for a
+these two data structures, you can obtain the recent miss history for a
 given load by traversing the linked list of table entries. There are
 several ways to use this information to predict what addresses might
 be needed in the future. We have decided to implement a version called

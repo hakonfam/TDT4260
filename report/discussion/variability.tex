@@ -49,7 +49,7 @@ by a maximum of 8KiB the Markov prefetcher is unable to contain a
 large enough graph to be able to perform accurate predictions. Since
 the Markov prefetcher only is able to prefetch addresses which it has
 already seen, it is unable to yield a high speedup for applications
-with a low rate of repeting memory addresses.
+with a low rate of repeating memory addresses.
 
 It is interesting to note, however, that the Markov prefetcher is the
 one with the highest speedup on any single benchmark. Although it has
@@ -76,7 +76,7 @@ to the SMS prefetcher, the performance is still good even when
 disregarding the best input case. This is a consequence of its generic
 nature, attempting to match both normal and more rare access patterns.
 
-An interesting remark is that even though the ABSP is a simplication
+An interesting remark is that even though the ABSP is a simplification
 of the prefetcher that GHB is an extension of, it has similar
 performance gains on several of the benchmark programs. As previously
 noted, when disregarding the \emph{ammp} benchmark, its results is

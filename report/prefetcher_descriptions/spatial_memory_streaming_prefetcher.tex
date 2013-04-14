@@ -2,7 +2,7 @@
 \label{sec:smsPrefetcher}
 
 The Spatial Memory Streaming (SMS) Prefetcher is a spatial locality
-prefetcher. It tries to exloit the relationship between a memory page, and a cache block. It was first presented in \cite{SMS}.
+prefetcher. It tries to exploit the relationship between a memory page, and a cache block. It was first presented in \cite{SMS}.
 
 Since a memory page is larger than a cache block, the memory page is
 fragmented across several cache blocks, and even though the page is in
@@ -29,7 +29,7 @@ with the same program counter and the same page offset.
   \label{fig:sms_pattern}
 \end{figure}
 
-Figure \ref{fig:sms_pattern} shows the access sequence patterns that SMS tries to exploit. Here pages 1 and 2 have exactly the same access pattern. Page 4 has a similar entry point but differs from 1 and 2 in that it accesses one more cache block. Altough Page 3 has some similar blocks it differs in entry. SMS will exploit the pattern that was recorded on page 1 to prefetch the blocks in Page 2 and 4.
+Figure \ref{fig:sms_pattern} shows the access sequence patterns that SMS tries to exploit. Here pages 1 and 2 have exactly the same access pattern. Page 4 has a similar entry point but differs from 1 and 2 in that it accesses one more cache block. Although Page 3 has some similar blocks it differs in entry. SMS will exploit the pattern that was recorded on page 1 to prefetch the blocks in Page 2 and 4.
 \newline
 
 SMS uses two different tables in its implementation. The Active
