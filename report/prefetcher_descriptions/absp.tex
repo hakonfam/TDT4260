@@ -1,12 +1,8 @@
 \subsection{Address based stride prefetcher}
 \label{sec:stridePrefetcher}
-The address based stride prefetcher (ABSP) is a simplified version of
-the Stride Directed Prefetcher \cite{stride}. The ABSP is based on the fact that
-memory accesses often follow a stride-n pattern (where n is the number
-of addresses between the accessed addresses). When accessing the
-members of an array, or iterating through a loop, most of the memory
-accesses will follow a stride-n pattern. An example can be seen in
-figure~\ref{fig:stride}.
+The address based stride prefetcher (ABSP) is a self composed, simplified version of
+the Stride Directed Prefetcher \cite{stride}. A stride is the difference between two memory addresses. The ABSP is based on the fact that
+memory accesses often follow a stride-n pattern (where n is difference between the last two accessed addresses). This situation would for example occur when iterating through a loop. An example can be seen in figure~\ref{fig:stride}.
 
 \begin{figure}[H]
 \centerline{\includegraphics[scale=0.5]{./figures/stride}}
@@ -14,17 +10,16 @@ figure~\ref{fig:stride}.
 \label{fig:stride}
 \end{figure}
 
-The ABSP keeps track of the last accessed address, what the delta of the addresses in the current stride is, and
-also keeps track of for how long the current stride has been
-ongoing. Compared to the Stride Directed Prefetcher, ABSP requires a constant amount of memory (only the last accessed address is saved). The fact that the ABSP is a strictly \emph{address based} prefetcher also means that the \emph{realization} would be simplified since it does not need to know the value of the Program Counter.
+The ABSP keeps track of the previously accessed address, what the delta of the addresses in the current stride is, and
+how many consecutive strides has been identified. Compared to the Stride Directed Prefetcher, ABSP only requires a constant amount of memory. The fact that the ABSP is an strictly \emph{address based} prefetcher also means that the realization would be simplified since it does not need to know the value of the program counter.
 
-For each memory access, the memory address is compared to the last
-memory address. If the current stride value corresponds to the
+For each memory access, the memory address is compared to the preceding
+memory address. If the current delta corresponds to the
 difference, the number of current strides is updated. If the number of
 current strides is greater than or equal to the required/configured
 amount of strides, a prefetched address is returned.  
 
 The prefetcher can be configured by changing two variables;
-the number of strides that need to occur in a row before
-the prefetcher will react on a memory access, and how many addresses it should prefetch once it is decided that it should prefetch.
+the number of consecutive strides that needs to be identified before
+the prefetcher will issue a prefetch on a memory access, and how many addresses it should prefetch.
 

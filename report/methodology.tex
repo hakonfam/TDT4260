@@ -10,7 +10,7 @@
 
 To discover what the effect of using different prefetching strategies
 for different applications are, we used a modified version of the M5
-simulator, version 2.0\cite{M5} as a testing platform. This simulator
+simulator, version 2.0 \cite{M5} as a testing platform. This simulator
 is a software implementation loosely based on the Alpha 21264
 processor\cite{Alpha}. The version used was provided by the course
 staff, and included an interface to the L2 cache prefetching
@@ -26,8 +26,7 @@ tracked key statistics during the program execution, such as cache
 misses, prefetches issued, and clock cycles used for running the
 program. By comparing the number of cycles used when executing the
 program with our prefetchers included in the simulator to the number
-of cycles used without a prefetcher, we could calculate the speedup
-gains due to the prefetcher for the different programs.
+of cycles used without a prefetcher, we could calculate the speedup due to the prefetcher for the different programs.
 
 \begin{table}[htbp]
   \centering
@@ -55,8 +54,8 @@ gains due to the prefetcher for the different programs.
 When implementing our prefetchers, there were a number of
 implementation parameters which had to be set (e.g. the size of the
 data structures used in the algorithm, the number of addresses to
-prefetch). To get fair comparisons between the different strategies,
-we wanted to find the settings which yielded the best results for each
+prefetch). To get a fair comparisons between the different strategies,
+we wanted to find the settings which yielded the highest average speedup for each
 prefetcher. To make the prefetchers more realistic, we were only
 allowed to use 8 KiB of storage internally in our prefetcher. This set
 the bounds for our prefetcher configuration space. 
@@ -66,8 +65,8 @@ was to set them initially to more or less arbitrary values within the
 permissible range, and attempt to locate at least a local maximum by
 varying the parameters in turn. Due to the enormous possible set of
 values, only a few were tried for each degree of freedom---these are
-listed in \autoref{tab:stridesettings}, \autoref{tab:ghbsettings} and
-\autoref{tab:smssettings}. The
+listed in \autoref{tab:stridesettings}, \autoref{tab:ghbsettings},
+\autoref{tab:smssettings} and \autoref{tab:markovsettings}. The
 combination of parameters which yielded the highest average speedup
 are marked in bold.
 
@@ -86,7 +85,7 @@ are marked in bold.
 
 \begin{table}[htbp]
   \centering
-  \begin{tabular}{|c|c|c|}
+  \begin{tabular}{|c|c|}
     \hline
     \textbf{Table Size} & \textbf{Prefetch Degree} \\ \hline
     300 & 3 \\ \hline
@@ -111,6 +110,18 @@ are marked in bold.
   \label{tab:smssettings}
 \end{table}
 
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Table Size} & \textbf{Prefetch Degree} \\ \hline
+    2000 & 2 \\ \hline
+    4000 & 3 \\ \hline
+    \textbf{6000} & \textbf{4} \\ \hline
+  \end{tabular}
+  \caption{The various parameters attempted for the Markov prefetcher. The table size is the maximum number of nodes in the Markov chain, and the prefetch degree is the number of edges to follow when prefetching.}
+  \label{tab:markovsettings}
+\end{table}
 
 
 % \begin{table}[htbp]
